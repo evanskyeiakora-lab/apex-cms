@@ -102,19 +102,19 @@
 
     <div class="countdown d-flex justify-content-center gap-3 flex-wrap my-4">
         <div>
-            <span id="days">00</span>
+            <span id="days">05</span>
             Days
         </div>
         <div>
-            <span id="hours">00</span>
+            <span id="hours">01</span>
             Hours
         </div>
         <div>
-            <span id="minutes">00</span>
+            <span id="minutes">45</span>
             Minutes
         </div>
         <div>
-            <span id="seconds">00</span>
+            <span id="seconds">30</span>
             Seconds
         </div>
     </div>
@@ -136,33 +136,33 @@
 
 <script>
 // Launch Date
-const launchDate = new Date("December 31, 2026 23:59:59").getTime();
+//const launchDate = new Date("December 31, 2026 23:59:59").getTime();
 
-const timer = setInterval(function() {
+//const timer = setInterval(function() {
 
-    const now = new Date().getTime();
-    const distance = launchDate - now;
+   // const now = new Date().getTime();
+   // const distance = launchDate - now;
 
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24))
-                  / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60))
-                  / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60))
-                  / 1000);
+   // const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    //const hours = Math.floor((distance % (1000 * 60 * 60 * 24))
+     //             / (1000 * 60 * 60));
+   // const minutes = Math.floor((distance % (1000 * 60 * 60))
+    //              / (1000 * 60));
+   // const seconds = Math.floor((distance % (1000 * 60))
+    //              / 1000);
 
-    document.getElementById("days").innerHTML = days;
-    document.getElementById("hours").innerHTML = hours;
-    document.getElementById("minutes").innerHTML = minutes;
-    document.getElementById("seconds").innerHTML = seconds;
+   // document.getElementById("days").innerHTML = days;
+   // document.getElementById("hours").innerHTML = hours;
+   // document.getElementById("minutes").innerHTML = minutes;
+   // document.getElementById("seconds").innerHTML = seconds;
 
-    if(distance < 0){
-        clearInterval(timer);
-        document.querySelector(".countdown").innerHTML =
-        "<h3>We're Live!</h3>";
-    }
+  //  if(distance < 0){
+   //     clearInterval(timer);
+    //    document.querySelector(".countdown").innerHTML =
+    //    "<h3>We're Live!</h3>";
+   // }
 
-}, 1000);
+//}, 1000);
 </script>
 
 </body>
