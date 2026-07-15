@@ -400,45 +400,84 @@ from the admin dashboard.
             </p>
         </div>
 
-        <div class="row g-4">
+      <div class="row g-4">
 
-            {% for i in range(3) %}
+{% if latest_news %}
 
-            <div class="col-lg-4">
+    {% for article in latest_news %}
 
-                <div class="card shadow-sm border-0 h-100">
+    <div class="col-lg-4">
 
-                    <img src="{{ url_for('static', filename='images/news-placeholder.jpg') }}"
-                         class="card-img-top">
+        <div class="card shadow-sm border-0 h-100">
 
-                    <div class="card-body">
+            {% if article.featured_image %}
 
-                        <small class="text-muted">
-                            22 June 2026
-                        </small>
+            <img
+                src="{{ url_for('static',
+                filename='uploads/news/' ~ article.featured_image) }}"
+                class="card-img-top"
+                style="height:240px; object-fit:cover;">
 
-                        <h5 class="mt-2">
-                            Sample News Headline
-                        </h5>
+            {% else %}
 
-                        <p>
-                            This section will automatically display news
-                            published from the admin dashboard.
-                        </p>
+            <img
+                src="{{ url_for('static',
+                filename='images/news-placeholder.jpg') }}"
+                class="card-img-top"
+                style="height:240px; object-fit:cover;">
 
-                        <a href="#" class="btn btn-sm btn-primary">
-                            Read More
-                        </a>
+            {% endif %}
 
-                    </div>
+            <div class="card-body">
 
-                </div>
+                <small class="text-muted">
+
+                    {{ article.created_at.strftime("%d %B %Y") }}
+
+                </small>
+
+                <h5 class="mt-2">
+
+                    {{ article.title }}
+
+                </h5>
+
+                <p>
+
+                    {{ article.content|striptags|truncate(120) }}
+
+                </p>
+
+                <a href="#"
+                   class="btn btn-primary btn-sm">
+
+                    Read More
+
+                </a>
 
             </div>
 
-            {% endfor %}
-
         </div>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="col-12">
+
+    <div class="alert alert-info text-center">
+
+        No published news available.
+
+    </div>
+
+</div>
+
+{% endif %}
+
+</div>
 
     </div>
 
