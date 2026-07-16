@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# Flask
+instance/
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Uploads (optional)
+app/static/uploads/news/*
+!app/static/uploads/news/.gitkeep
