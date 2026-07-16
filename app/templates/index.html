@@ -1,1306 +1,283 @@
-
 {% extends "base.html" %}
 
-{% block title %}Home | Apex Citizens of Ghana{% endblock %}
+{% block title %}
+Apex Citizens of Ghana
+{% endblock %}
+
 
 {% block content %}
 
-<!-- ================= HERO SECTION ================= -->
+<!-- HERO SECTION -->
+<section class="bg-dark text-white py-5">
+    <div class="container py-5">
 
-<section class="hero">
+        <div class="row align-items-center">
 
-    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="col-lg-7">
 
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
-        </div>
+                <h1 class="display-4 fw-bold">
+                    Building A Better Ghana Together
+                </h1>
 
-        <div class="carousel-inner">
+                <p class="lead mt-3">
+                    Empowering citizens through unity, development,
+                    transparency and community engagement.
+                </p>
 
-            <!-- Slide 1 -->
-            <div class="carousel-item active hero-slide hero-slide-1">
-
-                <div class="hero-overlay">
-
-                    <div class="container">
-
-                        <div class="row align-items-center min-vh-100">
-
-                            <div class="col-lg-7">
-
-                                <h1 class="display-3 fw-bold text-white">
-                                    Building a Better Ghana Together
-                                </h1>
-
-                                <p class="lead text-white my-4">
-                                    Apex Citizens of Ghana promotes transparency,
-                                    accountability and active citizen participation
-                                    for national development.
-                                </p>
-
-                                <a href="#" class="btn btn-warning btn-lg me-3">
-                                    Become a Member
-                                </a>
-
-                                <a href="#" class="btn btn-outline-light btn-lg">
-                                    Donate Now
-                                </a>
-
-                            </div>
-
-                            <div class="col-lg-5 text-center">
-
-                                <img src="{{ url_for('static', filename='images/logo.png') }}"
-                                     class="img-fluid"
-                                     style="max-height:320px;">
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                <a href="#about" class="btn btn-primary btn-lg mt-3">
+                    Learn More
+                </a>
 
             </div>
 
-            <!-- Slide 2 -->
 
-            <div class="carousel-item hero-slide hero-slide-2">
+            <div class="col-lg-5 text-center">
 
-                <div class="hero-overlay">
-
-                    <div class="container">
-
-                        <div class="row align-items-center min-vh-100">
-
-                            <div class="col-lg-8">
-
-                                <h1 class="display-3 fw-bold text-white">
-
-                                    Empowering Every Citizen
-
-                                </h1>
-
-                                <p class="lead text-white">
-
-                                    We educate, advocate and mobilize citizens
-                                    to strengthen democracy and accountability.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Slide 3 -->
-
-            <div class="carousel-item hero-slide hero-slide-3">
-
-                <div class="hero-overlay">
-
-                    <div class="container">
-
-                        <div class="row align-items-center min-vh-100">
-
-                            <div class="col-lg-8">
-
-                                <h1 class="display-3 fw-bold text-white">
-
-                                    Together We Can Make A Difference
-
-                                </h1>
-
-                                <p class="lead text-white">
-
-                                    Join Apex Citizens of Ghana and become
-                                    part of the movement.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                <i class="fa-solid fa-people-group fa-10x"></i>
 
             </div>
 
         </div>
 
     </div>
-
 </section>
 
-<!-- ================= WELCOME ================= -->
 
-<section class="py-5">
+
+<!-- ABOUT -->
+<section id="about" class="py-5">
 
 <div class="container">
 
-<div class="row align-items-center">
+<div class="text-center mb-5">
 
-<div class="col-lg-6">
-
-<h2 class="fw-bold mb-4">
-
-Welcome to Apex Citizens of Ghana
-
+<h2 class="fw-bold">
+About Us
 </h2>
 
+<p class="text-muted">
+Serving communities with commitment and vision.
+</p>
+
+</div>
+
+
+<div class="row">
+
+<div class="col-md-6">
+
 <p>
-
-Apex Citizens of Ghana is a civic organization dedicated to promoting
-good governance, transparency, accountability and citizen participation.
-
+Apex Citizens of Ghana is committed to promoting
+citizen participation, community development and
+social responsibility.
 </p>
 
 <p>
+We believe in building stronger communities through
+education, collaboration and innovation.
+</p>
 
-We believe that informed citizens can transform communities and help
-build a stronger Ghana for future generations.
+</div>
+
+
+<div class="col-md-6">
+
+<div class="card shadow">
+
+<div class="card-body">
+
+<h4>
+Our Vision
+</h4>
+
+<p>
+A united Ghana where every citizen contributes
+to sustainable national development.
+</p>
+
+
+<h4>
+Our Mission
+</h4>
+
+<p>
+To inspire, educate and empower citizens.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</section>
+
+
+
+
+
+<!-- NEWS SECTION -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+
+<div class="text-center mb-5">
+
+<h2 class="fw-bold">
+Latest News
+</h2>
+
+</div>
+
+
+
+<div class="row">
+
+
+{% if latest_news %}
+
+
+{% for article in latest_news %}
+
+
+<div class="col-md-4 mb-4">
+
+
+<div class="card h-100 shadow-sm">
+
+
+{% if article.featured_image %}
+
+<img src="{{ url_for('static', filename='uploads/news/' + article.featured_image) }}"
+class="card-img-top"
+style="height:220px; object-fit:cover;">
+
+{% endif %}
+
+
+
+<div class="card-body">
+
+
+<h5 class="card-title">
+
+{{ article.title }}
+
+</h5>
+
+
+
+<p class="text-muted">
+
+{{ article.content|striptags|truncate(120) }}
 
 </p>
 
-<a href="#" class="btn btn-primary">
+
+
+<a href="#" class="btn btn-outline-primary">
 
 Read More
 
 </a>
 
-</div>
-
-<div class="col-lg-6 text-center">
-
-<img src="{{ url_for('static', filename='images/logo.png') }}"
-class="img-fluid"
-style="max-height:350px;">
 
 </div>
 
-</div>
 
 </div>
 
-</section>
-
-<!-- ================= MISSION ================= -->
-
-<section class="py-5 bg-light">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2 class="fw-bold">
-
-Mission • Vision • Values
-
-</h2>
-
-<p class="text-muted">
-
-Guided by integrity and commitment to national development.
-
-</p>
 
 </div>
 
-<div class="row g-4">
-
-<div class="col-lg-4">
-
-<div class="info-card h-100">
-
-<div class="icon-box">
-
-<i class="fas fa-bullseye"></i>
-
-</div>
-
-<h4>
-
-Mission
-
-</h4>
-
-<p>
-
-Promoting transparency,
-accountability and civic participation
-through education and advocacy.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-lg-4">
-
-<div class="info-card h-100">
-
-<div class="icon-box">
-
-<i class="fas fa-eye"></i>
-
-</div>
-
-<h4>
-
-Vision
-
-</h4>
-
-<p>
-
-A Ghana where every citizen actively
-contributes toward sustainable
-development.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-lg-4">
-
-<div class="info-card h-100">
-
-<div class="icon-box">
-
-<i class="fas fa-handshake"></i>
-
-</div>
-
-<h4>
-
-Core Values
-
-</h4>
-
-<ul class="list-unstyled">
-
-<li>Integrity</li>
-
-<li>Transparency</li>
-
-<li>Patriotism</li>
-
-<li>Inclusiveness</li>
-
-<li>Service</li>
-
-</ul>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================= STRATEGIC PILLARS ================= -->
-
-<section class="py-5">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2 class="fw-bold">
-
-Strategic Pillars
-
-</h2>
-
-<p class="text-muted">
-
-Our key focus areas.
-
-</p>
-
-</div>
-
-<div class="row g-4">
-
-{% set pillars = [
-
-("fa-scale-balanced","Good Governance"),
-
-("fa-users","Citizen Participation"),
-
-("fa-graduation-cap","Civic Education"),
-
-("fa-leaf","Environmental Sustainability"),
-
-("fa-briefcase","Youth Empowerment"),
-
-("fa-globe-africa","Community Development")
-
-] %}
-
-{% for icon,title in pillars %}
-
-<div class="col-md-6 col-lg-4">
-
-<div class="pillar-card h-100">
-
-<i class="fas {{ icon }}"></i>
-
-<h5 class="mt-3">
-
-{{ title }}
-
-</h5>
-
-<p>
-
-This section will later be editable
-from the admin dashboard.
-
-</p>
-
-</div>
-
-</div>
 
 {% endfor %}
 
-</div>
 
-</div>
-
-</section>
-
-<!-- ================= IMPACT ================= -->
-<!-- ================= LATEST NEWS ================= -->
-
-<section class="py-5 bg-light">
-
-    <div class="container">
-
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">Latest News</h2>
-            <p class="text-muted">
-                Stay informed about our activities and initiatives.
-            </p>
-        </div>
-
-      <div class="row g-4">
-
-{% if latest_news %}
-
-    {% for article in latest_news %}
-
-    <div class="col-lg-4">
-
-        <div class="card shadow-sm border-0 h-100">
-
-            {% if article.featured_image %}
-
-            <img
-                src="{{ url_for('static',
-                filename='uploads/news/' ~ article.featured_image) }}"
-                class="card-img-top"
-                style="height:240px; object-fit:cover;">
-
-            {% else %}
-
-            <img
-                src="{{ url_for('static',
-                filename='images/news-placeholder.jpg') }}"
-                class="card-img-top"
-                style="height:240px; object-fit:cover;">
-
-            {% endif %}
-
-            <div class="card-body">
-
-                <small class="text-muted">
-
-                    {{ article.created_at.strftime("%d %B %Y") }}
-
-                </small>
-
-                <h5 class="mt-2">
-
-                    {{ article.title }}
-
-                </h5>
-
-                <p>
-
-                    {{ article.content|striptags|truncate(120) }}
-
-                </p>
-
-                <a href="#"
-                   class="btn btn-primary btn-sm">
-
-                    Read More
-
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {% endfor %}
 
 {% else %}
 
-<div class="col-12">
-
-    <div class="alert alert-info text-center">
-
-        No published news available.
-
-    </div>
-
-</div>
+<p class="text-center">
+No news available.
+</p>
 
 {% endif %}
 
+
+
 </div>
 
-    </div>
+
+</div>
 
 </section>
 
 
 
-<!-- ================= GALLERY ================= -->
+
+
+<!-- CONTACT -->
 
 <section class="py-5">
 
 <div class="container">
 
-<div class="text-center mb-5">
 
-<h2 class="fw-bold">
-
-Gallery
-
-</h2>
-
-<p class="text-muted">
-
-Photos from our events and community outreach.
-
-</p>
-
-</div>
-
-<div class="row g-3">
-
-{% for i in range(6) %}
-
-<div class="col-md-4">
-
-<div class="gallery-placeholder">
-
-<i class="fas fa-image"></i>
-
-<p class="mt-3">
-
-Image Placeholder
-
-</p>
-
-</div>
-
-</div>
-
-{% endfor %}
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- ================= DONATE ================= -->
-
-<section class="donate-section">
-
-<div class="container">
-
-<div class="row align-items-center">
-
-<div class="col-lg-6">
+<div class="text-center">
 
 <h2>
-
-Support Our Mission
-
+Contact Us
 </h2>
 
-<p>
-
-Your donations help us educate communities,
-promote transparency and advocate for
-good governance.
-
-</p>
-
-<a href="#" class="btn btn-warning">
-
-Donate Today
-
-</a>
-
-</div>
-
-<div class="col-lg-6">
-
-<div class="donation-box">
-
-<h4>
-
-Bank Details
-
-</h4>
-
-<p><strong>Account Name:</strong> Apex Citizens of Ghana</p>
-
-<p><strong>Bank:</strong> GCB Bank – Mampong Ash Branch</p>
-
-<p><strong>Account No:</strong> 6071010089223</p>
-
-<p><strong>Bank Code:</strong> 040607</p>
-
-<p><strong>SWIFT:</strong> GHCBGHAC</p>
-
-<p><strong>P.O. Box:</strong> Box 94, Mampong Ash</p>
-
-<hr>
-
-<h5>
-
-Mobile Money
-
-</h5>
 
 <p>
-
-0540774120
-
+Email: info@apexcghana.org
 </p>
 
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================= MEMBERSHIP ================= -->
-
-<section class="py-5">
-
-<div class="container">
-
-<div class="membership-box text-center">
-
-<h2>
-
-Become A Member
-
-</h2>
 
 <p>
-
-Join Apex Citizens of Ghana and help build
-a transparent and prosperous nation.
-
+Phone: +233 XX XXX XXXX
 </p>
 
-<a href="#"
-class="btn btn-primary btn-lg">
-
-Register Today
-
-</a>
 
 </div>
+
 
 </div>
 
 </section>
 
 
-=======
-{% extends "base.html" %}
 
-{% block title %}Home | Apex Citizens of Ghana{% endblock %}
 
-{% block content %}
 
-<!-- ================= HERO SECTION ================= -->
+<!-- FOOTER -->
 
-<section class="hero">
+<footer class="bg-dark text-white py-4">
 
-    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
 
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
-        </div>
+<div class="container text-center">
 
-        <div class="carousel-inner">
 
-            <!-- Slide 1 -->
-            <div class="carousel-item active hero-slide hero-slide-1">
+<p class="mb-0">
 
-                <div class="hero-overlay">
-
-                    <div class="container">
-
-                        <div class="row align-items-center min-vh-100">
-
-                            <div class="col-lg-7">
-
-                                <h1 class="display-3 fw-bold text-white">
-                                    Building a Better Ghana Together
-                                </h1>
-
-                                <p class="lead text-white my-4">
-                                    Apex Citizens of Ghana promotes transparency,
-                                    accountability and active citizen participation
-                                    for national development.
-                                </p>
-
-                                <a href="#" class="btn btn-warning btn-lg me-3">
-                                    Become a Member
-                                </a>
-
-                                <a href="#" class="btn btn-outline-light btn-lg">
-                                    Donate Now
-                                </a>
-
-                            </div>
-
-                            <div class="col-lg-5 text-center">
-
-                                <img src="{{ url_for('static', filename='images/logo.png') }}"
-                                     class="img-fluid"
-                                     style="max-height:320px;">
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Slide 2 -->
-
-            <div class="carousel-item hero-slide hero-slide-2">
-
-                <div class="hero-overlay">
-
-                    <div class="container">
-
-                        <div class="row align-items-center min-vh-100">
-
-                            <div class="col-lg-8">
-
-                                <h1 class="display-3 fw-bold text-white">
-
-                                    Empowering Every Citizen
-
-                                </h1>
-
-                                <p class="lead text-white">
-
-                                    We educate, advocate and mobilize citizens
-                                    to strengthen democracy and accountability.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Slide 3 -->
-
-            <div class="carousel-item hero-slide hero-slide-3">
-
-                <div class="hero-overlay">
-
-                    <div class="container">
-
-                        <div class="row align-items-center min-vh-100">
-
-                            <div class="col-lg-8">
-
-                                <h1 class="display-3 fw-bold text-white">
-
-                                    Together We Can Make A Difference
-
-                                </h1>
-
-                                <p class="lead text-white">
-
-                                    Join Apex Citizens of Ghana and become
-                                    part of the movement.
-
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- ================= WELCOME ================= -->
-
-<section class="py-5">
-
-<div class="container">
-
-<div class="row align-items-center">
-
-<div class="col-lg-6">
-
-<h2 class="fw-bold mb-4">
-
-Welcome to Apex Citizens of Ghana
-
-</h2>
-
-<p>
-
-Apex Citizens of Ghana is a civic organization dedicated to promoting
-good governance, transparency, accountability and citizen participation.
+© {{ current_year }} Apex Citizens of Ghana.
+All Rights Reserved.
 
 </p>
 
-<p>
-
-We believe that informed citizens can transform communities and help
-build a stronger Ghana for future generations.
-
-</p>
-
-<a href="#" class="btn btn-primary">
-
-Read More
-
-</a>
 
 </div>
 
-<div class="col-lg-6 text-center">
 
-<img src="{{ url_for('static', filename='images/logo.png') }}"
-class="img-fluid"
-style="max-height:350px;">
+</footer>
 
-</div>
 
-</div>
-
-</div>
-
-</section>
-
-<!-- ================= MISSION ================= -->
-
-<section class="py-5 bg-light">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2 class="fw-bold">
-
-Mission • Vision • Values
-
-</h2>
-
-<p class="text-muted">
-
-Guided by integrity and commitment to national development.
-
-</p>
-
-</div>
-
-<div class="row g-4">
-
-<div class="col-lg-4">
-
-<div class="info-card h-100">
-
-<div class="icon-box">
-
-<i class="fas fa-bullseye"></i>
-
-</div>
-
-<h4>
-
-Mission
-
-</h4>
-
-<p>
-
-Promoting transparency,
-accountability and civic participation
-through education and advocacy.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-lg-4">
-
-<div class="info-card h-100">
-
-<div class="icon-box">
-
-<i class="fas fa-eye"></i>
-
-</div>
-
-<h4>
-
-Vision
-
-</h4>
-
-<p>
-
-A Ghana where every citizen actively
-contributes toward sustainable
-development.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-lg-4">
-
-<div class="info-card h-100">
-
-<div class="icon-box">
-
-<i class="fas fa-handshake"></i>
-
-</div>
-
-<h4>
-
-Core Values
-
-</h4>
-
-<ul class="list-unstyled">
-
-<li>Integrity</li>
-
-<li>Transparency</li>
-
-<li>Patriotism</li>
-
-<li>Inclusiveness</li>
-
-<li>Service</li>
-
-</ul>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================= STRATEGIC PILLARS ================= -->
-
-<section class="py-5">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2 class="fw-bold">
-
-Strategic Pillars
-
-</h2>
-
-<p class="text-muted">
-
-Our key focus areas.
-
-</p>
-
-</div>
-
-<div class="row g-4">
-
-{% set pillars = [
-
-("fa-scale-balanced","Good Governance"),
-
-("fa-users","Citizen Participation"),
-
-("fa-graduation-cap","Civic Education"),
-
-("fa-leaf","Environmental Sustainability"),
-
-("fa-briefcase","Youth Empowerment"),
-
-("fa-globe-africa","Community Development")
-
-] %}
-
-{% for icon,title in pillars %}
-
-<div class="col-md-6 col-lg-4">
-
-<div class="pillar-card h-100">
-
-<i class="fas {{ icon }}"></i>
-
-<h5 class="mt-3">
-
-{{ title }}
-
-</h5>
-
-<p>
-
-This section will later be editable
-from the admin dashboard.
-
-</p>
-
-</div>
-
-</div>
-
-{% endfor %}
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================= IMPACT ================= -->
-<!-- ================= LATEST NEWS ================= -->
-
-<section class="py-5 bg-light">
-
-    <div class="container">
-
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">Latest News</h2>
-            <p class="text-muted">
-                Stay informed about our activities and initiatives.
-            </p>
-        </div>
-
-      <div class="row g-4">
-
-{% if latest_news %}
-
-    {% for article in latest_news %}
-
-    <div class="col-lg-4">
-
-        <div class="card shadow-sm border-0 h-100">
-
-            {% if article.featured_image %}
-
-            <img
-                src="{{ url_for('static',
-                filename='uploads/news/' ~ article.featured_image) }}"
-                class="card-img-top"
-                style="height:240px; object-fit:cover;">
-
-            {% else %}
-
-            <img
-                src="{{ url_for('static',
-                filename='images/news-placeholder.jpg') }}"
-                class="card-img-top"
-                style="height:240px; object-fit:cover;">
-
-            {% endif %}
-
-            <div class="card-body">
-
-                <small class="text-muted">
-
-                    {{ article.created_at.strftime("%d %B %Y") }}
-
-                </small>
-
-                <h5 class="mt-2">
-
-                    {{ article.title }}
-
-                </h5>
-
-                <p>
-
-                    {{ article.content|striptags|truncate(120) }}
-
-                </p>
-
-                <a href="#"
-                   class="btn btn-primary btn-sm">
-
-                    Read More
-
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {% endfor %}
-
-{% else %}
-
-<div class="col-12">
-
-    <div class="alert alert-info text-center">
-
-        No published news available.
-
-    </div>
-
-</div>
-
-{% endif %}
-
-</div>
-
-    </div>
-
-</section>
-
-
-
-<!-- ================= GALLERY ================= -->
-
-<section class="py-5">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2 class="fw-bold">
-
-Gallery
-
-</h2>
-
-<p class="text-muted">
-
-Photos from our events and community outreach.
-
-</p>
-
-</div>
-
-<div class="row g-3">
-
-{% for i in range(6) %}
-
-<div class="col-md-4">
-
-<div class="gallery-placeholder">
-
-<i class="fas fa-image"></i>
-
-<p class="mt-3">
-
-Image Placeholder
-
-</p>
-
-</div>
-
-</div>
-
-{% endfor %}
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- ================= DONATE ================= -->
-
-<section class="donate-section">
-
-<div class="container">
-
-<div class="row align-items-center">
-
-<div class="col-lg-6">
-
-<h2>
-
-Support Our Mission
-
-</h2>
-
-<p>
-
-Your donations help us educate communities,
-promote transparency and advocate for
-good governance.
-
-</p>
-
-<a href="#" class="btn btn-warning">
-
-Donate Today
-
-</a>
-
-</div>
-
-<div class="col-lg-6">
-
-<div class="donation-box">
-
-<h4>
-
-Bank Details
-
-</h4>
-
-<p><strong>Account Name:</strong> Apex Citizens of Ghana</p>
-
-<p><strong>Bank:</strong> GCB Bank – Mampong Ash Branch</p>
-
-<p><strong>Account No:</strong> 6071010089223</p>
-
-<p><strong>Bank Code:</strong> 040607</p>
-
-<p><strong>SWIFT:</strong> GHCBGHAC</p>
-
-<p><strong>P.O. Box:</strong> Box 94, Mampong Ash</p>
-
-<hr>
-
-<h5>
-
-Mobile Money
-
-</h5>
-
-<p>
-
-0540774120
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ================= MEMBERSHIP ================= -->
-
-<section class="py-5">
-
-<div class="container">
-
-<div class="membership-box text-center">
-
-<h2>
-
-Become A Member
-
-</h2>
-
-<p>
-
-Join Apex Citizens of Ghana and help build
-a transparent and prosperous nation.
-
-</p>
-
-<a href="#"
-class="btn btn-primary btn-lg">
-
-Register Today
-
-</a>
-
-</div>
-
-</div>
-
-</section>
-
-
->>>>>>> 022ced50e15f9aab31856a4018ca682c0c439eec
 {% endblock %}
