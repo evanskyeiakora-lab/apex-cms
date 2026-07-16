@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, app
 from datetime import datetime
 
 from config import Config
@@ -10,9 +10,14 @@ def create_app():
     app.config.from_object(Config)
 
     # Initialize extensions
+   # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+
+# Flask-Login configuration
+    login_manager.login_view = "auth.login"
+    login_manager.login_message_category = "warning"
 
     # Import models
     from . import models

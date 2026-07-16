@@ -1,24 +1,23 @@
+# Virtual environments
+.venv/
+venv/
+
 # Python
 __pycache__/
 *.py[cod]
 
-# Virtual Environments
-.venv/
-venv/
-env/
-
-# Flask
-instance/
-
 # Environment variables
 .env
+
+# Flask instance
+instance/
+
+# Uploaded files
+app/static/uploads/
 
 # VS Code
 .vscode/
 
-# macOS
+# OS files
 .DS_Store
-
-# Uploads (optional)
-app/static/uploads/news/*
-!app/static/uploads/news/.gitkeep
+Thumbs.db
