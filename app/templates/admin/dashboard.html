@@ -1,74 +1,175 @@
 {% extends "admin/layout.html" %}
 
-{% block title %}
-Dashboard
-{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 
-<h2 class="mb-4">
-    Dashboard
-</h2>
+<div class="container-fluid">
 
-<div class="row">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Dashboard</h2>
+            <p class="text-muted mb-0">
+                Welcome back! Here's what's happening.
+            </p>
+        </div>
 
-    <div class="col-md-3">
+        <a href="{{ url_for('news.create') }}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Add News
+        </a>
+    </div>
 
-        <div class="card shadow">
+    <div class="row g-4">
 
-            <div class="card-body text-center">
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-newspaper fa-2x text-primary mb-3"></i>
+                    <h3>{{ stats.news }}</h3>
+                    <p class="text-muted mb-0">Total News</p>
+                </div>
+            </div>
+        </div>
 
-                <h5>Total News</h5>
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-circle-check fa-2x text-success mb-3"></i>
+                    <h3>{{ stats.published_news }}</h3>
+                    <p class="text-muted mb-0">Published</p>
+                </div>
+            </div>
+        </div>
 
-                <h2>0</h2>
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-pen fa-2x text-warning mb-3"></i>
+                    <h3>{{ stats.draft_news }}</h3>
+                    <p class="text-muted mb-0">Draft News</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fa-solid fa-users fa-2x text-info mb-3"></i>
+                    <h3>{{ stats.members }}</h3>
+                    <p class="text-muted mb-0">Leadership Team</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4 mt-2">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        Recent News
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    {% if recent_news %}
+
+                        <table class="table table-hover align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                            {% for article in recent_news %}
+
+                                <tr>
+
+                                    <td>{{ article.title }}</td>
+
+                                    <td>
+
+                                        {% if article.status == "published" %}
+
+                                            <span class="badge bg-success">
+                                                Published
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-warning">
+                                                Draft
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        {{ article.created_at.strftime('%d %b %Y') }}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    {% else %}
+
+                        <p>No news available.</p>
+
+                    {% endif %}
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+        <div class="col-lg-4">
 
-    <div class="col-md-3">
+            <div class="card shadow-sm border-0">
 
-        <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        Quick Actions
+                    </h5>
+                </div>
 
-            <div class="card-body text-center">
+                <div class="card-body d-grid gap-2">
 
-                <h5>Gallery</h5>
+                    <a href="{{ url_for('news.create') }}" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Add News
+                    </a>
 
-                <h2>0</h2>
+                    <a href="#" class="btn btn-success">
+                        <i class="fa fa-image"></i> Upload Gallery
+                    </a>
 
-            </div>
+                    <a href="#" class="btn btn-info">
+                        <i class="fa fa-users"></i> Manage Leaders
+                    </a>
 
-        </div>
+                    <a href="#" class="btn btn-dark">
+                        <i class="fa fa-cog"></i> Site Settings
+                    </a>
 
-    </div>
-
-    <div class="col-md-3">
-
-        <div class="card shadow">
-
-            <div class="card-body text-center">
-
-                <h5>Members</h5>
-
-                <h2>0</h2>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="col-md-3">
-
-        <div class="card shadow">
-
-            <div class="card-body text-center">
-
-                <h5>Messages</h5>
-
-                <h2>0</h2>
+                </div>
 
             </div>
 
