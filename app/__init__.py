@@ -1,9 +1,9 @@
-from flask import Flask, app
+from flask import Flask
 from datetime import datetime
 
 from config import Config
 from .extensions import db, migrate, login_manager
-
+from .hero import hero_bp
 
 def create_app():
     app = Flask(__name__)
@@ -32,6 +32,7 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(admin_bp, url_prefix="/admin")
     app.register_blueprint(news_bp)
+    app.register_blueprint(hero_bp)
 
     @app.context_processor
     def inject_now():
