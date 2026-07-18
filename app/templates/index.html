@@ -8,38 +8,85 @@ Apex Citizens of Ghana
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="bg-dark text-white py-5">
-    <div class="container py-5">
-
-        <div class="row align-items-center">
-
-            <div class="col-lg-7">
-
-                <h1 class="display-4 fw-bold">
-                    Building A Better Ghana Together
-                </h1>
-
-                <p class="lead mt-3">
-                    Empowering citizens through unity, development,
-                    transparency and community engagement.
-                </p>
-
-                <a href="#about" class="btn btn-primary btn-lg mt-3">
-                    Learn More
-                </a>
-
-            </div>
 
 
-            <div class="col-lg-5 text-center">
+<section>
 
-                <i class="fa-solid fa-people-group fa-10x"></i>
+<div id="heroCarousel"
+     class="carousel slide carousel-fade"
+     data-bs-ride="carousel"
+     data-bs-interval="5000">
 
-            </div>
+{% for slide in slides %}
 
-        </div>
+<div class="carousel-item {% if loop.first %}active{% endif %}">
 
-    </div>
+<div class="position-relative">
+
+<img src="{{ url_for('static',
+filename='uploads/hero/' ~ slide.image) }}"
+class="d-block w-100"
+style="height:650px;object-fit:cover;">
+
+<div class="carousel-caption d-flex flex-column justify-content-center h-100">
+
+<h1 class="display-3 fw-bold">
+
+{{ slide.title }}
+
+</h1>
+
+{% if slide.subtitle %}
+
+<p class="lead">
+
+{{ slide.subtitle }}
+
+</p>
+
+{% endif %}
+
+{% if slide.button_text %}
+
+<a href="{{ slide.button_url }}"
+class="btn btn-primary btn-lg">
+
+{{ slide.button_text }}
+
+</a>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<button class="carousel-control-prev"
+type="button"
+data-bs-target="#heroCarousel"
+data-bs-slide="prev">
+
+<span class="carousel-control-prev-icon"></span>
+
+</button>
+
+<button class="carousel-control-next"
+type="button"
+data-bs-target="#heroCarousel"
+data-bs-slide="next">
+
+<span class="carousel-control-next-icon"></span>
+
+</button>
+
+</div>
+
 </section>
 
 

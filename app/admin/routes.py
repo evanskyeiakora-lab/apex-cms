@@ -7,7 +7,8 @@ from app.models import (
     News,
     Gallery,
     Member,
-    ContactMessage
+    ContactMessage,
+    HeroSlide
 )
 
 
@@ -38,9 +39,18 @@ def dashboard():
         .all()
     )
 
+    recent_slides = (
+    HeroSlide.query
+    .order_by(HeroSlide.created_at.desc())
+    .limit(5)
+    .all()
+)
+
+
     return render_template(
-        "admin/dashboard.html",
-        stats=stats,
-        recent_news=recent_news,
-        recent_messages=recent_messages
-    )
+    "admin/dashboard.html",
+    stats=stats,
+    recent_news=recent_news,
+    recent_messages=recent_messages,
+    recent_slides=recent_slides
+)

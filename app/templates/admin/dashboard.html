@@ -79,6 +79,81 @@
 
                     {% if recent_news %}
 
+                    <div class="card shadow-sm border-0 mt-4">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0">
+
+            Recent Hero Slides
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if recent_slides %}
+
+            <table class="table table-hover">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Title</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for slide in recent_slides %}
+
+                    <tr>
+
+                        <td>{{ slide.title }}</td>
+
+                        <td>
+
+                            {% if slide.is_active %}
+
+                                <span class="badge bg-success">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        {% else %}
+
+            <p>No Hero Slides</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
                         <table class="table table-hover align-middle">
 
                             <thead>
@@ -157,7 +232,7 @@
                         <i class="fa fa-plus"></i> Add News
                     </a>
 
-                    <a href="#" class="btn btn-success">
+                    <a href="{{ url_for('hero.index') }}" class="btn btn-success"></a>
                         <i class="fa fa-image"></i> Upload Gallery
                     </a>
 
@@ -178,5 +253,38 @@
     </div>
 
 </div>
+
+<div class="col-lg-3 col-md-6">
+    <div class="card shadow-sm border-0">
+        <div class="card-body text-center">
+
+            <i class="fa-solid fa-images fa-2x text-danger mb-3"></i>
+
+            <h3>{{ stats.hero }}</h3>
+
+            <p class="text-muted mb-0">
+                Hero Slides
+            </p>
+
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-3 col-md-6">
+    <div class="card shadow-sm border-0">
+        <div class="card-body text-center">
+
+            <i class="fa-solid fa-envelope fa-2x text-success mb-3"></i>
+
+            <h3>{{ stats.messages }}</h3>
+
+            <p class="text-muted mb-0">
+                Messages
+            </p>
+
+        </div>
+    </div>
+</div>
+
 
 {% endblock %}
