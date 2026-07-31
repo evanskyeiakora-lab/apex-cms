@@ -1,0 +1,294 @@
+/* ===========================
+   APEX CITIZENS OF GHANA
+=========================== */
+
+:root{
+
+    --primary:#0B6E4F;
+    --secondary:#D4AF37;
+    --dark:#1F2937;
+    --light:#F8F9FA;
+    --white:#ffffff;
+    --text:#4B5563;
+
+}
+
+/* GENERAL */
+
+body{
+
+    font-family:"Segoe UI",sans-serif;
+    color:var(--text);
+    background:#fff;
+    line-height:1.7;
+
+}
+
+a{
+
+    text-decoration:none;
+    transition:.3s;
+
+}
+
+img{
+
+    max-width:100%;
+
+}
+
+section{
+
+    padding:90px 0;
+
+}
+
+.section-title{
+
+    font-size:2.3rem;
+    font-weight:700;
+    color:var(--primary);
+
+}
+
+.section-subtitle{
+
+    color:#777;
+    max-width:700px;
+    margin:auto;
+
+}
+
+/* BUTTONS */
+
+.btn-primary{
+
+    background:var(--primary);
+    border-color:var(--primary);
+
+}
+
+.btn-primary:hover{
+
+    background:#08553d;
+    border-color:#08553d;
+
+}
+
+.btn-outline-primary{
+
+    color:var(--primary);
+    border-color:var(--primary);
+
+}
+
+.btn-outline-primary:hover{
+
+    background:var(--primary);
+
+}
+
+/* NAVBAR */
+
+.navbar{
+
+    background:#fff;
+    box-shadow:0 3px 15px rgba(0,0,0,.08);
+
+}
+
+.navbar-brand{
+
+    font-weight:700;
+    color:var(--primary);
+
+}
+
+.nav-link{
+
+    color:#444;
+    font-weight:500;
+    margin-left:18px;
+
+}
+
+.nav-link:hover{
+
+    color:var(--primary);
+
+}
+
+/* HERO */
+
+.hero-section{
+
+    min-height:700px;
+    position:relative;
+
+}
+
+.hero-slide{
+
+    min-height:700px;
+    display:flex;
+    align-items:center;
+    background-size:cover;
+    background-position:center;
+
+}
+
+.hero-overlay{
+
+    background:rgba(0,0,0,.55);
+    width:100%;
+    height:100%;
+
+}
+
+.hero-content{
+
+    color:#fff;
+    padding:150px 0;
+
+}
+
+.hero-content h1{
+
+    font-size:3.4rem;
+    font-weight:700;
+
+}
+
+.hero-content p{
+
+    font-size:1.2rem;
+
+}
+
+/* CARDS */
+
+.card{
+
+    border:none;
+    border-radius:18px;
+    transition:.3s;
+    overflow:hidden;
+
+}
+
+.card:hover{
+
+    transform:translateY(-10px);
+    box-shadow:0 15px 40px rgba(0,0,0,.15);
+
+}
+
+/* STATISTICS */
+
+.counter-box{
+
+    background:#fff;
+    padding:35px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 5px 25px rgba(0,0,0,.08);
+
+}
+
+.counter-box h2{
+
+    color:var(--primary);
+    font-size:3rem;
+    font-weight:700;
+
+}
+
+/* CTA */
+
+.cta-section{
+
+    background:linear-gradient(135deg,var(--primary),#0d8d63);
+    color:#fff;
+
+}
+
+/* FOOTER */
+
+footer{
+
+    background:#0d1117;
+    color:#bbb;
+
+}
+
+footer a{
+
+    color:#ddd;
+
+}
+
+footer a:hover{
+
+    color:var(--secondary);
+
+}
+
+/* BACK TO TOP */
+
+#backToTop{
+
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    display:none;
+    width:50px;
+    height:50px;
+    z-index:999;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:992px){
+
+.hero-content h1{
+
+font-size:2.5rem;
+
+}
+
+.hero-slide{
+
+min-height:550px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+section{
+
+padding:70px 0;
+
+}
+
+.hero-content{
+
+text-align:center;
+
+}
+
+.hero-content h1{
+
+font-size:2rem;
+
+}
+
+.section-title{
+
+font-size:1.8rem;
+
+}
+
+}

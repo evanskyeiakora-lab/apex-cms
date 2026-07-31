@@ -1,0 +1,128 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}Create Page{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-lg-10 mx-auto">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h4 class="mb-0">
+
+                        Edit Page
+
+                    </h4>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form method="POST"
+                          enctype="multipart/form-data">
+
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+
+                            {{ form.title.label(class="form-label") }}
+
+                            {{ form.title(class="form-control") }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.slug.label(class="form-label") }}
+
+                            {{ form.slug(class="form-control") }}
+
+                            <small class="text-muted">
+
+                                Example: about-us
+
+                            </small>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.content.label(class="form-label") }}
+
+                            {{ form.content(
+                                class="form-control",
+                                rows="10"
+                            ) }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.featured_image.label(class="form-label") }}
+
+                            {{ form.featured_image(class="form-control") }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.meta_title.label(class="form-label") }}
+
+                            {{ form.meta_title(class="form-control") }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.meta_description.label(class="form-label") }}
+
+                            {{ form.meta_description(
+                                class="form-control",
+                                rows="3"
+                            ) }}
+
+                        </div>
+
+                        <div class="form-check mb-4">
+
+                            {{ form.is_published(class="form-check-input") }}
+
+                            {{ form.is_published.label(class="form-check-label") }}
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-success">
+
+                            Update Page
+
+                        </button>
+
+                        <a
+                            href="{{ url_for('pages.index') }}"
+                            class="btn btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ event.title }} | Apex Citizens of Ghana
+{% endblock %}
+
+{% block content %}
+
+{% set page_title = event.title %}
+{% set page_subtitle = "Event Details" %}
+{% include "includes/page_header.html" %}
+
+<div class="container py-5">
+
+    <div class="row">
+
+        <div class="col-lg-8">
+
+            {% if event.featured_image %}
+            <img src="{{ url_for('static', filename='uploads/events/' ~ event.featured_image) }}"
+                 class="img-fluid rounded shadow mb-4"
+                 alt="{{ event.title }}">
+            {% endif %}
+
+            <h2 class="mb-3">{{ event.title }}</h2>
+
+            <div class="mb-4">
+
+                <p>
+                    <i class="fa-solid fa-calendar-days me-2 text-primary"></i>
+                    <strong>Date:</strong>
+                    {{ event.start_date.strftime('%d %B %Y') }}
+
+                    {% if event.end_date %}
+                        - {{ event.end_date.strftime('%d %B %Y') }}
+                    {% endif %}
+                </p>
+
+                {% if event.start_time %}
+                <p>
+                    <i class="fa-solid fa-clock me-2 text-primary"></i>
+                    <strong>Time:</strong>
+                    {{ event.start_time.strftime('%I:%M %p') }}
+
+                    {% if event.end_time %}
+                        - {{ event.end_time.strftime('%I:%M %p') }}
+                    {% endif %}
+                </p>
+                {% endif %}
+
+                {% if event.venue %}
+                <p>
+                    <i class="fa-solid fa-location-dot me-2 text-primary"></i>
+                    <strong>Venue:</strong>
+                    {{ event.venue }}
+                </p>
+                {% endif %}
+
+                {% if event.organizer %}
+                <p>
+                    <i class="fa-solid fa-user me-2 text-primary"></i>
+                    <strong>Organizer:</strong>
+                    {{ event.organizer }}
+                </p>
+                {% endif %}
+
+            </div>
+
+            <hr>
+
+            <div class="mt-4">
+                {{ event.description|safe }}
+            </div>
+
+            {% if event.registration_link %}
+            <div class="mt-5">
+                <a href="{{ event.registration_link }}"
+                   target="_blank"
+                   class="btn btn-primary btn-lg">
+                    <i class="fa-solid fa-user-plus me-2"></i>
+                    Register Now
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+                    <strong>Upcoming Events</strong>
+                </div>
+
+                <div class="list-group list-group-flush">
+
+                    {% for item in upcoming %}
+
+                    <a href="{{ url_for('main.event_detail', slug=item.slug) }}"
+                       class="list-group-item list-group-item-action">
+
+                        <strong>{{ item.title }}</strong>
+
+                        <br>
+
+                        <small class="text-muted">
+                            {{ item.start_date.strftime('%d %b %Y') }}
+                        </small>
+
+                    </a>
+
+                    {% else %}
+
+                    <div class="list-group-item">
+                        No upcoming events.
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

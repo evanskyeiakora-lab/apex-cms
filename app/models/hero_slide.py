@@ -1,9 +1,8 @@
-from datetime import datetime
-
 from app.extensions import db
+from app.utils.mixins import TimestampMixin
 
 
-class HeroSlide(db.Model):
+class HeroSlide(TimestampMixin, db.Model):
     __tablename__ = "hero_slides"
 
     id = db.Column(
@@ -43,12 +42,8 @@ class HeroSlide(db.Model):
 
     is_active = db.Column(
         db.Boolean,
-        default=True
-    )
-
-    created_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
+        default=True,
+        nullable=False
     )
 
     def __repr__(self):

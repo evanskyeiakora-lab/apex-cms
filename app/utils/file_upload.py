@@ -5,44 +5,39 @@ from flask import current_app
 from werkzeug.utils import secure_filename
 
 
-ALLOWED_EXTENSIONS = {
-    "jpg",
-    "jpeg",
-    "png",
-    "webp"
-}
+def allowed_file(filename):
+    """
+    Check whether the uploaded file has an allowed extension.
+    """
+    if not filename or "." not in filename:
+        return False
+
+    extension = filename.rsplit(".", 1)[1].lower()
+
+    return extension in current_app.config["ALLOWED_EXTENSIONS"]
+
+
+def generate_unique_filename(filename):
+    """
+    Generate a unique filename while preserving the original extension.
+    """
+    extension = filename.rsplit(".", 1)[1].lower()
+    return f"{uuid.uuid4().hex}.{extension}"
 
 
 def save_image(file, folder):
     """
-    Save an uploaded image and return the filename.
-
-    Args:
-        file: Uploaded FileStorage object
-        folder: Folder inside static/uploads
-                e.g. "news", "hero", "gallery"
-
-    Returns:
-        filename or None
+    Save an uploaded image and return the stored filename.
     """
-
-    if not file:
+    if not file or file.filename == "":
         return None
 
-    if file.filename == "":
-        return None
+    if not allowed_file(file.filename):
+        raise ValueError("Unsupported image format.")
 
-    filename = secure_filename(file.filename)
-
-    if "." not in filename:
-        return None
-
-    extension = filename.rsplit(".", 1)[1].lower()
-
-    if extension not in ALLOWED_EXTENSIONS:
-        return None
-
-    filename = f"{uuid.uuid4().hex}.{extension}"
+    filename = generate_unique_filename(
+        secure_filename(file.filename)
+    )
 
     upload_folder = os.path.join(
         current_app.config["UPLOAD_FOLDER"],
@@ -51,8 +46,37 @@ def save_image(file, folder):
 
     os.makedirs(upload_folder, exist_ok=True)
 
-    file.save(
-        os.path.join(upload_folder, filename)
-    )
+    filepath = os.path.join(upload_folder, filename)
+
+    file.save(filepath)
 
     return filename
+
+
+def delete_image(filename, folder):
+    """
+    Delete an image from disk.
+    """
+    if not filename:
+        return
+
+    filepath = os.path.join(
+        current_app.config["UPLOAD_FOLDER"],
+        folder,
+        filename
+    )
+
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+
+def replace_image(old_image, new_file, folder):
+    """
+    Replace an existing image with a newly uploaded one.
+    """
+    if not new_file or new_file.filename == "":
+        return old_image
+
+    delete_image(old_image, folder)
+
+    return save_image(new_file, folder)

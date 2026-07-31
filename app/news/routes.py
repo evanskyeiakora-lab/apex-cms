@@ -15,7 +15,10 @@ from .forms import NewsForm
 
 from app.extensions import db
 from app.models import News
-from app.utils.file_upload import save_image
+from app.utils.file_upload import (
+    replace_image,
+    delete_image
+)
 
 
 # ======================================
@@ -72,13 +75,11 @@ def create():
         if article.status == "published":
             article.published_at = datetime.utcnow()
 
-        filename = save_image(
+        article.featured_image = replace_image(
+            None,
             form.featured_image.data,
             "news"
         )
-
-        if filename:
-            article.featured_image = filename
 
         db.session.add(article)
         db.session.commit()
@@ -88,10 +89,9 @@ def create():
             "success"
         )
 
-        return redirect(url_for("news.index"))
-
-    if request.method == "POST":
-        print(form.errors)
+        return redirect(
+            url_for("news.index")
+        )
 
     return render_template(
         "admin/news/create.html",
@@ -124,13 +124,11 @@ def edit(id):
         ):
             article.published_at = datetime.utcnow()
 
-        filename = save_image(
+        article.featured_image = replace_image(
+            article.featured_image,
             form.featured_image.data,
             "news"
         )
-
-        if filename:
-            article.featured_image = filename
 
         db.session.commit()
 
@@ -139,7 +137,9 @@ def edit(id):
             "success"
         )
 
-        return redirect(url_for("news.index"))
+        return redirect(
+            url_for("news.index")
+        )
 
     return render_template(
         "admin/news/edit.html",
@@ -157,6 +157,11 @@ def delete(id):
 
     article = News.query.get_or_404(id)
 
+    delete_image(
+        article.featured_image,
+        "news"
+    )
+
     db.session.delete(article)
     db.session.commit()
 
@@ -165,4 +170,6 @@ def delete(id):
         "success"
     )
 
-    return redirect(url_for("news.index"))
+    return redirect(
+        url_for("news.index")
+    )

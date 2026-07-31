@@ -1,52 +1,115 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+<!-- ==========================================
+     Navbar Start
+=========================================== -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
 
     <div class="container">
 
-        <a class="navbar-brand fw-bold" href="/">
-            Apex Citizens of Ghana
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center"
+           href="{{ url_for('main.home') }}">
+
+            {% if settings.logo %}
+                <img src="{{ url_for('static', filename='uploads/settings/' ~ settings.logo) }}"
+                     alt="{{ settings.site_name }}"
+                     height="55"
+                     class="me-2">
+            {% else %}
+                <img src="{{ url_for('static', filename='images/logo.png') }}"
+                     alt="Logo"
+                     height="55"
+                     class="me-2">
+            {% endif %}
+
+            <div class="d-flex flex-column">
+
+                <span class="fw-bold text-success">
+                    {{ settings.site_name if settings else "Apex Citizens of Ghana" }}
+                </span>
+
+                {% if settings.tagline %}
+                <small class="text-muted">
+                    {{ settings.tagline }}
+                </small>
+                {% endif %}
+
+            </div>
+
         </a>
 
+        <!-- Mobile Toggle -->
+
         <button class="navbar-toggler"
+                type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
+                data-bs-target="#navbarMenu">
 
             <span class="navbar-toggler-icon"></span>
 
         </button>
 
-        <div class="collapse navbar-collapse"
-             id="navbarNav">
+        <!-- Menu -->
 
-            <ul class="navbar-nav ms-auto">
+        <div class="collapse navbar-collapse" id="navbarMenu">
+
+            <ul class="navbar-nav ms-auto align-items-lg-center">
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/">
+                    <a class="nav-link {% if request.endpoint=='main.home' %}active{% endif %}"
+                       href="{{ url_for('main.home') }}">
                         Home
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link"
+                       href="{{ url_for('main.page', slug='about') }}">
                         About
                     </a>
                 </li>
 
+                <!-- Hide until the route exists -->
+                {#
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link"
+                       href="{{ url_for('main.news') }}">
                         News
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        Gallery
+                    <a class="nav-link {% if request.endpoint=='main.events' %}active{% endif %}"
+                       href="{{ url_for('main.events') }}">
+                        Events
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {% if request.endpoint=='main.gallery' %}active{% endif %}"
+                       href="{{ url_for('main.gallery') }}">
+                        Gallery
+                    </a>
+                </li>
+
+                <!-- Hide until the route exists -->
+                {#
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="{{ url_for('main.contact') }}">
                         Contact
                     </a>
+                </li>
+                #}
+
+                <li class="nav-item ms-lg-3">
+
+                    <a href="{{ url_for('main.page', slug='about') }}"
+                       class="btn btn-primary px-4">
+
+                        Join Us
+
+                    </a>
+
                 </li>
 
             </ul>
@@ -56,3 +119,6 @@
     </div>
 
 </nav>
+<!-- ==========================================
+     Navbar End
+=========================================== -->

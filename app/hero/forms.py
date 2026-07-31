@@ -9,7 +9,11 @@ from wtforms import (
     SubmitField
 )
 
-from wtforms.validators import DataRequired
+from wtforms.validators import (
+    DataRequired,
+    Optional,
+    URL
+)
 
 
 class HeroForm(FlaskForm):
@@ -38,7 +42,11 @@ class HeroForm(FlaskForm):
     )
 
     button_url = StringField(
-        "Button URL"
+        "Button URL",
+        validators=[
+            Optional(),
+            URL()
+        ]
     )
 
     display_order = IntegerField(

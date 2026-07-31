@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ gallery.title }} | Gallery
+{% endblock %}
+
+{% block content %}
+
+{% set page_title = gallery.title %}
+{% set page_subtitle = gallery.category %}
+{% include "includes/page_header.html" %}
+
+<div class="container py-5">
+
+    <div class="row">
+
+        <div class="col-lg-8">
+
+            <img
+                src="{{ url_for('static', filename='uploads/gallery/' ~ gallery.image) }}"
+                class="img-fluid rounded shadow">
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h3>
+
+                        {{ gallery.title }}
+
+                    </h3>
+
+                    <span class="badge bg-primary">
+
+                        {{ gallery.category }}
+
+                    </span>
+
+                    {% if gallery.is_featured %}
+
+                    <span class="badge bg-warning text-dark">
+
+                        Featured
+
+                    </span>
+
+                    {% endif %}
+
+                    <hr>
+
+                    <p>
+
+                        {{ gallery.description }}
+
+                    </p>
+
+                    <a
+                        href="{{ url_for('main.gallery') }}"
+                        class="btn btn-outline-secondary">
+
+                        <i class="fas fa-arrow-left me-2"></i>
+
+                        Back to Gallery
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

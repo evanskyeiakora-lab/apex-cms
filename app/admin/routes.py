@@ -21,6 +21,7 @@ def dashboard():
         "published_news": News.query.filter_by(status="published").count(),
         "draft_news": News.query.filter_by(status="draft").count(),
         "gallery": Gallery.query.count(),
+        "hero": HeroSlide.query.count(),
         "members": Member.query.count(),
         "messages": ContactMessage.query.count(),
     }
@@ -39,18 +40,41 @@ def dashboard():
         .all()
     )
 
+    recent_members = (
+        Member.query
+        .order_by(Member.id.desc())
+        .limit(5)
+        .all()
+    )
+
+    recent_gallery = (
+        Gallery.query
+        .order_by(Gallery.created_at.desc())
+        .limit(5)
+        .all()
+    )
+
     recent_slides = (
-    HeroSlide.query
-    .order_by(HeroSlide.created_at.desc())
+        HeroSlide.query
+        .order_by(HeroSlide.display_order.asc())
+        .limit(5)
+        .all()
+    )
+
+    recent_messages = (
+    ContactMessage.query
+    .order_by(ContactMessage.created_at.desc())
     .limit(5)
     .all()
-)
+    )
 
 
     return render_template(
-    "admin/dashboard.html",
-    stats=stats,
-    recent_news=recent_news,
-    recent_messages=recent_messages,
-    recent_slides=recent_slides
-)
+        "admin/dashboard.html",
+        stats=stats,
+        recent_news=recent_news,
+        recent_messages=recent_messages,
+        recent_members=recent_members,
+        recent_gallery=recent_gallery,
+        recent_slides=recent_slides
+    )

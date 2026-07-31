@@ -1,0 +1,27 @@
+<div class="card shadow-sm border-0">
+
+    <div class="card-header bg-white">
+        <h4 class="mb-0">
+            {{ form_title }}
+        </h4>
+    </div>
+
+    <div class="card-body">
+
+        {% include "admin/components/_alerts.html" %}
+
+        <form method="POST"
+              enctype="multipart/form-data">
+
+            {{ form.hidden_tag() }}
+
+            {% block form_content %}
+            {% endblock %}
+
+            {% include "admin/components/_form_buttons.html" %}
+
+        </form>
+
+    </div>
+
+</div>

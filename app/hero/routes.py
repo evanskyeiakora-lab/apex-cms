@@ -2,7 +2,6 @@ from flask import (
     render_template,
     redirect,
     url_for,
-    flash,
     request
 )
 
@@ -11,9 +10,18 @@ from flask_login import login_required
 from . import hero_bp
 from .forms import HeroForm
 
-from app.extensions import db
 from app.models import HeroSlide
-from app.utils.file_upload import save_image
+
+from app.utils import (
+    replace_image,
+    delete_image,
+    save,
+    commit,
+    delete,
+    flash_success
+)
+
+from app.utils.constants import HERO_FOLDER
 
 
 # ======================================
@@ -60,27 +68,25 @@ def create():
 
     if form.validate_on_submit():
 
-        filename = save_image(
-            form.image.data,
-            "hero"
-        )
-
         slide = HeroSlide(
             title=form.title.data,
             subtitle=form.subtitle.data,
-            image=filename,
             button_text=form.button_text.data,
             button_url=form.button_url.data,
             display_order=form.display_order.data,
             is_active=form.is_active.data
         )
 
-        db.session.add(slide)
-        db.session.commit()
+        slide.image = replace_image(
+            None,
+            form.image.data,
+            HERO_FOLDER
+        )
 
-        flash(
-            "Hero slide created successfully.",
-            "success"
+        save(slide)
+
+        flash_success(
+            "Hero slide created successfully."
         )
 
         return redirect(
@@ -114,19 +120,16 @@ def edit(id):
         slide.display_order = form.display_order.data
         slide.is_active = form.is_active.data
 
-        filename = save_image(
+        slide.image = replace_image(
+            slide.image,
             form.image.data,
-            "hero"
+            HERO_FOLDER
         )
 
-        if filename:
-            slide.image = filename
+        commit()
 
-        db.session.commit()
-
-        flash(
-            "Hero slide updated successfully.",
-            "success"
+        flash_success(
+            "Hero slide updated successfully."
         )
 
         return redirect(
@@ -146,16 +149,19 @@ def edit(id):
 
 @hero_bp.route("/delete/<int:id>")
 @login_required
-def delete(id):
+def delete_slide(id):
 
     slide = HeroSlide.query.get_or_404(id)
 
-    db.session.delete(slide)
-    db.session.commit()
+    delete_image(
+        slide.image,
+        HERO_FOLDER
+    )
 
-    flash(
-        "Hero slide deleted successfully.",
-        "success"
+    delete(slide)
+
+    flash_success(
+        "Hero slide deleted successfully."
     )
 
     return redirect(

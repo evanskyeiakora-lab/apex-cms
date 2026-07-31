@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}
+Gallery | Apex Citizens of Ghana
+{% endblock %}
+
+{% block content %}
+
+{% set page_title = "Gallery" %}
+{% set page_subtitle = "Browse moments captured during our programmes and activities." %}
+{% include "includes/page_header.html" %}
+
+<div class="container py-5">
+
+    <div class="row g-4">
+
+        {% for gallery in galleries.items %}
+
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <a href="{{ url_for('main.gallery_detail', slug=gallery.slug) }}">
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/gallery/' ~ gallery.image) }}"
+                        class="card-img-top"
+                        alt="{{ gallery.title }}"
+                        style="height:250px;object-fit:cover;">
+
+                </a>
+
+                <div class="card-body">
+
+                    {% if gallery.is_featured %}
+
+                    <span class="badge bg-warning text-dark mb-2">
+
+                        Featured
+
+                    </span>
+
+                    {% endif %}
+
+                    <h5>
+
+                        {{ gallery.title }}
+
+                    </h5>
+
+                    <small class="text-muted">
+
+                        {{ gallery.category }}
+
+                    </small>
+
+                    {% if gallery.description %}
+
+                    <p class="mt-2">
+
+                        {{ gallery.description|truncate(90) }}
+
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="card-footer bg-white border-0">
+
+                    <a
+                        href="{{ url_for('main.gallery_detail', slug=gallery.slug) }}"
+                        class="btn btn-primary w-100">
+
+                        View Image
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% if galleries.pages > 1 %}
+
+    <nav class="mt-5">
+
+        <ul class="pagination justify-content-center">
+
+            {% if galleries.has_prev %}
+
+            <li class="page-item">
+
+                <a class="page-link"
+                   href="{{ url_for('main.gallery', page=galleries.prev_num) }}">
+
+                    Previous
+
+                </a>
+
+            </li>
+
+            {% endif %}
+
+            {% for page in galleries.iter_pages() %}
+
+                {% if page %}
+
+                <li class="page-item {% if page==galleries.page %}active{% endif %}">
+
+                    <a class="page-link"
+                       href="{{ url_for('main.gallery', page=page) }}">
+
+                        {{ page }}
+
+                    </a>
+
+                </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if galleries.has_next %}
+
+            <li class="page-item">
+
+                <a class="page-link"
+                   href="{{ url_for('main.gallery', page=galleries.next_num) }}">
+
+                    Next
+
+                </a>
+
+            </li>
+
+            {% endif %}
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

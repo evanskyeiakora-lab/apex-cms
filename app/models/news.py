@@ -1,11 +1,13 @@
-from datetime import datetime
-
 from slugify import slugify
 
 from app.extensions import db
+from app.utils.mixins import (
+    TimestampMixin,
+    PublishMixin,
+)
 
 
-class News(db.Model):
+class News(TimestampMixin, PublishMixin, db.Model):
     __tablename__ = "news"
 
     id = db.Column(
@@ -30,36 +32,10 @@ class News(db.Model):
     )
 
     featured_image = db.Column(
-        db.String(255),
-        nullable=True
-    )
-
-    status = db.Column(
-        db.String(20),
-        default="draft",
-        nullable=False
-    )
-
-    published_at = db.Column(
-        db.DateTime,
-        nullable=True
-    )
-
-    created_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
-
-    updated_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
+        db.String(255)
     )
 
     def generate_slug(self):
-        """
-        Generate a unique slug from the title.
-        """
         base_slug = slugify(self.title)
         slug = base_slug
         counter = 1
@@ -75,6 +51,8 @@ class News(db.Model):
         self.slug = slug
 
     def publish(self):
+        from datetime import datetime
+
         self.status = "published"
 
         if not self.published_at:

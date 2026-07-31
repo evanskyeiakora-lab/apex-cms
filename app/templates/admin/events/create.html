@@ -1,0 +1,14 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}
+Create Event
+{% endblock %}
+
+{% block content %}
+
+{% set form_title = "Create Event" %}
+{% set back_url = url_for("events.index") %}
+
+{% include "admin/events/_form.html" %}
+
+{% endblock %}
