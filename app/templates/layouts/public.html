@@ -5,6 +5,21 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author"
+      content="Apex Citizens of Ghana">
+
+    <meta property="og:title"
+      content="{{ settings.site_name if settings else 'Apex Citizens of Ghana' }}">
+
+    <meta property="og:description"
+      content="{{ settings.meta_description if settings else '' }}">
+
+    <meta property="og:type"
+      content="website">
+
+      <meta name="theme-color"
+      content="#0D47A1">
+
 
     <title>
         {% block title %}
@@ -19,7 +34,11 @@
           content="{{ settings.meta_keywords if settings else '' }}">
 
     <link rel="icon"
-          href="{{ url_for('static', filename='images/favicon.png') }}">
+      href="{% if settings and settings.favicon %}
+              {{ url_for('static', filename='uploads/settings/' ~ settings.favicon) }}
+            {% else %}
+              {{ url_for('static', filename='images/favicon.png') }}
+            {% endif %}">
 
     <!-- Bootstrap -->
     <link rel="stylesheet"
@@ -161,28 +180,45 @@ document.querySelectorAll(".counter").forEach(counter => {
 {% block extra_js %}{% endblock %}
 
 <script>
-const heroSwiper = new Swiper(".heroSwiper", {
+document.addEventListener("DOMContentLoaded", function () {
 
-    loop: true,
+    const slider = document.querySelector(".heroSwiper");
 
-    speed: 1200,
+    if (!slider) return;
 
-    autoplay: {
-        delay: 5000,
-        disableOnInteraction: false
-    },
+    new Swiper(slider, {
 
-    pagination: {
-        el: ".swiper-pagination",
-        clickable: true
-    },
+        loop: true,
 
-    navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev"
-    }
+        speed: 1000,
+
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false
+        },
+
+        effect: "slide",
+
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true
+        },
+
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev"
+        },
+
+        observer: true,
+        observeParents: true,
+        watchOverflow: false
+
+    });
 
 });
+</script>
+<script defer
+        src="{{ url_for('static', filename='js/public.js') }}">
 </script>
 </body>
 </html>
