@@ -17,32 +17,47 @@
 
                         <div class="container">
 
-                            <div class="row align-items-center" style="min-height:100vh;">
+                            <div class="row align-items-center min-vh-100">
 
                                 <div class="col-lg-7">
 
                                     <div class="hero-content" data-aos="fade-right">
 
                                         {% if slide.title %}
-                                        <h1>
+                                        <span class="badge bg-warning text-dark px-3 py-2 mb-3">
+                                            Welcome to
+                                        </span>
+
+                                        <h1 class="display-3 fw-bold mb-4">
                                             {{ slide.title }}
                                         </h1>
                                         {% endif %}
 
                                         {% if slide.subtitle %}
-                                        <p>
+                                        <p class="lead mb-4">
                                             {{ slide.subtitle }}
                                         </p>
                                         {% endif %}
 
-                                        {% if slide.button_text and slide.button_url %}
-                                        <a href="{{ slide.button_url }}"
-                                           class="btn btn-warning btn-lg">
+                                        <div class="d-flex flex-wrap gap-3">
 
-                                            {{ slide.button_text }}
+                                            {% if slide.button_text and slide.button_url %}
+                                            <a href="{{ slide.button_url }}"
+                                               class="btn btn-warning btn-lg px-5">
 
-                                        </a>
-                                        {% endif %}
+                                                {{ slide.button_text }}
+
+                                            </a>
+                                            {% endif %}
+
+                                            <a href="{{ url_for('main.page', slug='about') }}"
+                                               class="btn btn-outline-light btn-lg px-5">
+
+                                                Learn More
+
+                                            </a>
+
+                                        </div>
 
                                     </div>
 
@@ -64,9 +79,9 @@
 
         <div class="swiper-pagination"></div>
 
-        <div class="swiper-button-next"></div>
-
         <div class="swiper-button-prev"></div>
+
+        <div class="swiper-button-next"></div>
 
     </div>
 
@@ -76,13 +91,33 @@
 
 <section class="hero-section bg-dark text-white">
 
-    <div class="container text-center py-5">
+    <div class="container">
 
-        <h1>Welcome to {{ settings.site_name }}</h1>
+        <div class="row align-items-center min-vh-100">
 
-        <p class="lead">
-            Building a stronger future together.
-        </p>
+            <div class="col-lg-7">
+
+                <h1 class="display-3 fw-bold">
+                    {{ settings.site_name }}
+                </h1>
+
+                <p class="lead mt-4">
+
+                    Building a stronger Ghana through leadership,
+                    unity and community development.
+
+                </p>
+
+                <a href="{{ url_for('main.page', slug='about') }}"
+                   class="btn btn-warning btn-lg mt-3">
+
+                    Learn More
+
+                </a>
+
+            </div>
+
+        </div>
 
     </div>
 

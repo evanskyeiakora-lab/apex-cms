@@ -1,31 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Initialize AOS
-    AOS.init({
-        duration: 700,
-        once: true
-    });
-
-    // Back to Top Button
-    const btn = document.getElementById("backToTop");
-
-    if (btn) {
-
-        window.addEventListener("scroll", function () {
-            btn.style.display = window.scrollY > 300 ? "block" : "none";
+    // ==========================
+    // AOS Animation
+    // ==========================
+    if (typeof AOS !== "undefined") {
+        AOS.init({
+            duration: 700,
+            once: true
         });
-
-        btn.addEventListener("click", function () {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        });
-
     }
 
+    // ==========================
     // Hero Swiper
-    if (document.querySelector(".heroSwiper")) {
+    // ==========================
+    if (typeof Swiper !== "undefined" && document.querySelector(".heroSwiper")) {
 
         new Swiper(".heroSwiper", {
 
@@ -54,7 +42,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    // ==========================
+    // Back To Top Button
+    // ==========================
+    const backToTop = document.getElementById("backToTop");
+
+    if (backToTop) {
+
+        window.addEventListener("scroll", function () {
+
+            if (window.scrollY > 300) {
+                backToTop.style.display = "block";
+            } else {
+                backToTop.style.display = "none";
+            }
+
+        });
+
+        backToTop.addEventListener("click", function () {
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        });
+
+    }
+
+    // ==========================
     // Animated Counters
+    // ==========================
     document.querySelectorAll(".counter").forEach(counter => {
 
         const target = parseInt(counter.dataset.target) || 0;
@@ -63,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const increment = target / 100;
 
-        const update = () => {
+        function updateCounter() {
 
             current += increment;
 
@@ -75,13 +93,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 counter.textContent = Math.floor(current).toLocaleString();
 
-                requestAnimationFrame(update);
+                requestAnimationFrame(updateCounter);
 
             }
 
-        };
+        }
 
-        update();
+        updateCounter();
 
     });
 

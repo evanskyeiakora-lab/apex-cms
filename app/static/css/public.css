@@ -120,13 +120,9 @@ section{
 
 /* HERO */
 
-/* ==========================================
-   HERO SECTION
-========================================== */
-
-.hero-section {
-    position: relative;
-}
+/* ==========================
+   HERO
+========================== */
 
 .heroSwiper {
     width: 100%;
@@ -134,19 +130,17 @@ section{
 }
 
 .hero-slide {
+    width: 100%;
     height: 100vh;
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     position: relative;
-    display: flex;
-    align-items: center;
 }
 
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, .55);
+    background: rgba(0,0,0,.55);
     display: flex;
     align-items: center;
 }
@@ -157,19 +151,12 @@ section{
 }
 
 .hero-content h1 {
-    font-size: 4rem;
     font-weight: 800;
-    line-height: 1.2;
+    line-height: 1.15;
 }
 
 .hero-content p {
-    font-size: 1.3rem;
-    margin: 25px 0;
-}
-
-.hero-content .btn {
-    padding: 14px 35px;
-    border-radius: 50px;
+    font-size: 1.25rem;
 }
 
 .swiper-button-next,
@@ -179,45 +166,33 @@ section{
 
 .swiper-pagination-bullet {
     background: #fff;
+    opacity: .8;
 }
 
 .swiper-pagination-bullet-active {
-    background: var(--secondary);
+    background: #D4AF37;
 }
 
-@media (max-width:992px) {
+@media (max-width:768px){
 
-    .heroSwiper,
-    .hero-slide {
-        height: 80vh;
-    }
-
-    .hero-content h1 {
-        font-size: 2.8rem;
-    }
-
-    .hero-content {
-        text-align: center;
-        margin: auto;
-    }
+.heroSwiper,
+.hero-slide{
+height:80vh;
 }
 
-@media (max-width:768px) {
-
-    .heroSwiper,
-    .hero-slide {
-        height: 70vh;
-    }
-
-    .hero-content h1 {
-        font-size: 2rem;
-    }
-
-    .hero-content p {
-        font-size: 1rem;
-    }
+.hero-content{
+text-align:center;
 }
 
+.hero-content h1{
+font-size:2.3rem;
+}
+
+.hero-content p{
+font-size:1rem;
+}
+
+}
 /* CARDS */
 
 .card{
