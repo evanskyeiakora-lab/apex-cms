@@ -1,0 +1,87 @@
+<!-- ==========================================
+     GALLERY SECTION
+========================================== -->
+
+<section class="gallery-section py-5 bg-light">
+
+    <div class="container">
+
+        <div class="text-center mb-5" data-aos="fade-up">
+
+            <span class="text-warning fw-bold text-uppercase">
+                Gallery
+            </span>
+
+            <h2 class="display-5 fw-bold mt-2">
+                Moments From Our Activities
+            </h2>
+
+            <p class="text-muted">
+                Explore memorable moments from our programmes,
+                community engagements, conferences and outreach activities.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            {% for item in featured_gallery %}
+
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in">
+
+                <div class="gallery-card">
+
+                    <a href="{{ url_for('main.gallery_detail', slug=item.slug) }}">
+
+                        <img src="{{ url_for('static',
+                            filename='uploads/gallery/' ~ item.image) }}"
+                             alt="{{ item.title }}">
+
+                    </a>
+
+                    <div class="gallery-overlay">
+
+                        <h5>{{ item.title }}</h5>
+
+                        <small>{{ item.category }}</small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="col-12 text-center">
+
+                <p class="lead">
+
+                    Gallery images will appear here soon.
+
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% if featured_gallery %}
+
+        <div class="text-center mt-5">
+
+            <a href="{{ url_for('main.gallery') }}"
+               class="btn btn-primary btn-lg">
+
+                View Full Gallery
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
