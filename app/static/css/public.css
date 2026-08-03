@@ -524,3 +524,56 @@ margin-bottom:20px;
     border-radius:50px;
 
 }
+
+
+/* ==========================================
+   EVENTS
+========================================== */
+
+.event-card{
+
+    border:none;
+    border-radius:20px;
+    overflow:hidden;
+    transition:.35s;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.event-card:hover{
+
+    transform:translateY(-10px);
+
+}
+
+.event-card img{
+
+    height:240px;
+    object-fit:cover;
+
+}
+
+.event-card .card-title{
+
+    font-weight:700;
+    color:var(--dark);
+
+}
+
+.event-card .card-text{
+
+    color:#666;
+
+}
+
+.event-card .badge{
+
+    font-size:.85rem;
+
+}
+
+.event-card .btn{
+
+    border-radius:50px;
+
+}
