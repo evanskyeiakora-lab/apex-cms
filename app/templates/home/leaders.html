@@ -1,5 +1,122 @@
-<section class="py-5 bg-light text-center">
+<!-- ==========================================
+     LEADERSHIP SECTION
+========================================== -->
+
+<section class="leaders-section py-5 bg-light">
+
     <div class="container">
-        <h2>Leaders</h2>
+
+        <div class="text-center mb-5" data-aos="fade-up">
+
+            <span class="text-warning fw-bold text-uppercase">
+                Leadership
+            </span>
+
+            <h2 class="display-5 fw-bold mt-2">
+                Meet Our Leadership Team
+            </h2>
+
+            <p class="text-muted">
+                Dedicated leaders committed to serving our communities,
+                promoting development, and inspiring positive change.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            {% for leader in leaders %}
+
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in">
+
+                <div class="leader-card">
+
+                    <div class="leader-image">
+
+                        {% if leader.photo %}
+
+                        <img src="{{ url_for('static',
+                            filename='uploads/leaders/' ~ leader.photo) }}"
+                            alt="{{ leader.name }}">
+
+                        {% else %}
+
+                        <img src="{{ url_for('static',
+                            filename='images/avatar.png') }}"
+                            alt="{{ leader.name }}">
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="leader-body">
+
+                        <h5>{{ leader.name }}</h5>
+
+                        <p class="leader-position">
+
+                            {{ leader.position }}
+
+                        </p>
+
+                        {% if leader.bio %}
+
+                        <p class="leader-bio">
+
+                            {{ leader.bio|truncate(100) }}
+
+                        </p>
+
+                        {% endif %}
+
+                        <div class="leader-social">
+
+                            {% if leader.facebook %}
+                            <a href="{{ leader.facebook }}" target="_blank">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            {% endif %}
+
+                            {% if leader.twitter %}
+                            <a href="{{ leader.twitter }}" target="_blank">
+                                <i class="fab fa-x-twitter"></i>
+                            </a>
+                            {% endif %}
+
+                            {% if leader.linkedin %}
+                            <a href="{{ leader.linkedin }}" target="_blank">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            {% endif %}
+
+                            {% if leader.email %}
+                            <a href="mailto:{{ leader.email }}">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="col-12 text-center">
+
+                <p class="lead">
+                    Leadership information will be available soon.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
     </div>
+
 </section>
