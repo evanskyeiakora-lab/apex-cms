@@ -404,3 +404,76 @@ font-size:1.8rem;
     font-size:1.1rem;
     color:#666;
 }
+
+/* ==========================================
+   STATISTICS SECTION
+========================================== */
+
+.statistics-section{
+
+    background:#ffffff;
+
+}
+
+.stat-card{
+
+    background:#fff;
+    border-radius:20px;
+    padding:40px 25px;
+    text-align:center;
+    transition:.35s;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    height:100%;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-10px);
+
+}
+
+.stat-icon{
+
+    width:80px;
+    height:80px;
+    margin:auto;
+    margin-bottom:20px;
+    border-radius:50%;
+    background:var(--primary);
+    color:#fff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:2rem;
+
+}
+
+.stat-card h2{
+
+    font-size:3rem;
+    color:var(--primary);
+    font-weight:700;
+    margin-bottom:10px;
+
+}
+
+.stat-card p{
+
+    font-size:1.1rem;
+    color:#666;
+    margin:0;
+
+}
+
+@media(max-width:768px){
+
+.stat-card{
+
+margin-bottom:20px;
+
+}
+
+}
