@@ -1,5 +1,85 @@
-<section class="py-5 bg-light text-center">
+<!-- ==========================================
+     ABOUT SECTION
+========================================== -->
+
+<section class="about-section py-5 bg-light">
+
     <div class="container">
-        <h2>About Section</h2>
+
+        <div class="row align-items-center g-5">
+
+            <!-- Image -->
+            <div class="col-lg-6" data-aos="fade-right">
+
+                <div class="about-image">
+
+                    <img src="{{ url_for('static', filename='images/about.png') }}"
+                         class="img-fluid rounded-4 shadow-lg"
+                         alt="{{ settings.site_name if settings else 'About Apex Citizens of Ghana' }}">
+
+                </div>
+
+            </div>
+
+            <!-- Content -->
+            <div class="col-lg-6" data-aos="fade-left">
+
+                <span class="text-warning fw-bold text-uppercase">
+
+                    About Us
+
+                </span>
+
+                <h2 class="display-5 fw-bold mt-3 mb-4">
+
+                    {% if about_page %}
+                        {{ about_page.title }}
+                    {% else %}
+                        Welcome to {{ settings.site_name if settings else "Apex Citizens of Ghana" }}
+                    {% endif %}
+
+                </h2>
+
+                {% if about_page %}
+
+                    <div class="about-text">
+
+                        {{ about_page.content[:700]|safe }}
+
+                        {% if about_page.content|length > 700 %}
+                            ...
+                        {% endif %}
+
+                    </div>
+
+                {% else %}
+
+                    <p class="lead">
+
+                        Apex Citizens of Ghana is committed to building
+                        stronger communities, empowering citizens,
+                        promoting leadership, encouraging youth development,
+                        and supporting sustainable national progress.
+
+                    </p>
+
+                {% endif %}
+
+                <div class="mt-4">
+
+                    <a href="{{ url_for('main.page', slug='about') }}"
+                       class="btn btn-primary btn-lg px-5">
+
+                        Read More
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
 </section>
