@@ -477,3 +477,50 @@ margin-bottom:20px;
 }
 
 }
+
+
+/* ==========================================
+   NEWS SECTION
+========================================== */
+
+.news-card{
+
+    border:none;
+    border-radius:20px;
+    overflow:hidden;
+    transition:.35s;
+
+}
+
+.news-card:hover{
+
+    transform:translateY(-10px);
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+}
+
+.news-card img{
+
+    height:240px;
+    object-fit:cover;
+
+}
+
+.news-card .card-title{
+
+    font-weight:700;
+    color:var(--dark);
+
+}
+
+.news-card .card-text{
+
+    color:#666;
+
+}
+
+.news-card .btn{
+
+    border-radius:50px;
+
+}
