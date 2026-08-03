@@ -746,3 +746,47 @@ margin-bottom:20px;
     color:#ddd;
 
 }
+
+
+/* ==========================================
+   CALL TO ACTION
+========================================== */
+
+.cta-section{
+
+    background:linear-gradient(
+        135deg,
+        var(--primary),
+        #0d8d63
+    );
+
+    padding:110px 0;
+
+}
+
+.cta-section h2{
+
+    font-weight:800;
+
+}
+
+.cta-section p{
+
+    max-width:700px;
+    margin:auto;
+
+}
+
+.cta-section .btn{
+
+    border-radius:50px;
+    padding:15px 40px;
+    transition:.35s;
+
+}
+
+.cta-section .btn:hover{
+
+    transform:translateY(-3px);
+
+}
