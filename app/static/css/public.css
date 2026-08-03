@@ -120,49 +120,102 @@ section{
 
 /* HERO */
 
-.hero-section{
+/* ==========================================
+   HERO SECTION
+========================================== */
 
-    min-height:700px;
-    position:relative;
-
+.hero-section {
+    position: relative;
 }
 
-.hero-slide{
-
-    min-height:700px;
-    display:flex;
-    align-items:center;
-    background-size:cover;
-    background-position:center;
-
+.heroSwiper {
+    width: 100%;
+    height: 100vh;
 }
 
-.hero-overlay{
-
-    background:rgba(0,0,0,.55);
-    width:100%;
-    height:100%;
-
+.hero-slide {
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.hero-content{
-
-    color:#fff;
-    padding:150px 0;
-
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .55);
+    display: flex;
+    align-items: center;
 }
 
-.hero-content h1{
-
-    font-size:3.4rem;
-    font-weight:700;
-
+.hero-content {
+    color: #fff;
+    max-width: 700px;
 }
 
-.hero-content p{
+.hero-content h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
 
-    font-size:1.2rem;
+.hero-content p {
+    font-size: 1.3rem;
+    margin: 25px 0;
+}
 
+.hero-content .btn {
+    padding: 14px 35px;
+    border-radius: 50px;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #fff;
+}
+
+.swiper-pagination-bullet {
+    background: #fff;
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--secondary);
+}
+
+@media (max-width:992px) {
+
+    .heroSwiper,
+    .hero-slide {
+        height: 80vh;
+    }
+
+    .hero-content h1 {
+        font-size: 2.8rem;
+    }
+
+    .hero-content {
+        text-align: center;
+        margin: auto;
+    }
+}
+
+@media (max-width:768px) {
+
+    .heroSwiper,
+    .hero-slide {
+        height: 70vh;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
 }
 
 /* CARDS */

@@ -30,7 +30,7 @@ def home():
         .filter_by(is_active=True)
         .order_by(HeroSlide.display_order.asc())
         .all()
-    )
+)
 
     about_page = (
         Page.query
@@ -83,12 +83,24 @@ def home():
     )
 
     stats = {
-        "members_count": Member.query.count(),
-        "leaders_count": Leader.query.count(),
-        "news_count": News.query.count(),
-        "events_count": Event.query.count(),
-        "gallery_count": Gallery.query.count()
-    }
+    "members_count": Member.query.count(),
+
+    "leaders_count": Leader.query.filter_by(
+        is_active=True
+    ).count(),
+
+    "news_count": News.query.filter_by(
+        status="published"
+    ).count(),
+
+    "events_count": Event.query.filter_by(
+        is_published=True
+    ).count(),
+
+    "gallery_count": Gallery.query.filter_by(
+        is_published=True
+    ).count()
+}
 
     return render_template(
         "index.html",
