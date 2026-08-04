@@ -12,10 +12,8 @@ env/
 .env
 
 # Database
-instance/
-*.db
-*.sqlite3
-
+# instance/
+# *.db
 # VS Code
 .vscode/
 

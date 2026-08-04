@@ -10,7 +10,6 @@ INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
 # Create the instance directory if it doesn't exist
 os.makedirs(INSTANCE_DIR, exist_ok=True)
 
-print("DATABASE =", "sqlite:///" + os.path.join(INSTANCE_DIR, "acg.db"))
 
 
 class Config:

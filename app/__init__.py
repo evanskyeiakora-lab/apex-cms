@@ -3,28 +3,23 @@ from datetime import datetime
 
 from config import Config
 from .extensions import db, migrate, login_manager
-from .hero import hero_bp
-from .gallery import gallery_bp
-from .events import events_bp
 from app.context_processors import inject_settings
-
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Initialize extensions
-   # Initialize extensions
+    # Initialize Extensions
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-# Flask-Login configuration
+    # Flask-Login Configuration
     login_manager.login_view = "auth.login"
     login_manager.login_message_category = "warning"
 
-    # Import models
+    # Import Blueprints
     from .main import main_bp
     from .auth import auth_bp
     from .admin import admin_bp
@@ -37,6 +32,7 @@ def create_app():
     from .pages import pages_bp
     from .events import events_bp
 
+    # Register Blueprints
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(admin_bp, url_prefix="/admin")
@@ -48,15 +44,14 @@ def create_app():
     app.register_blueprint(settings_bp)
     app.register_blueprint(pages_bp)
     app.register_blueprint(events_bp)
-    app.context_processor(inject_settings)
 
+    # Global Context Processors
+    app.context_processor(inject_settings)
 
     @app.context_processor
     def inject_now():
         return {
             "current_year": datetime.now().year
         }
-
-   
 
     return app
