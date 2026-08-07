@@ -5,6 +5,7 @@ GALLERY_FOLDER = "gallery"
 MEMBERS_FOLDER = "members"
 PAGES_FOLDER = "pages"
 SETTINGS_FOLDER = "settings"
+USERS_FOLDER = "users"
 
 ALLOWED_IMAGE_EXTENSIONS = {
     "jpg",
@@ -14,3 +15,19 @@ ALLOWED_IMAGE_EXTENSIONS = {
 }
 
 MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
+
+class Roles:
+    SUPER_ADMIN = "Super Admin"
+    ADMINISTRATOR = "Administrator"
+    EDITOR = "Editor"
+    AUTHOR = "Author"
+    MODERATOR = "Moderator"
+
+    CHOICES = [
+        (SUPER_ADMIN, "Super Admin"),
+        (ADMINISTRATOR, "Administrator"),
+        (EDITOR, "Editor"),
+        (AUTHOR, "Author"),
+        (MODERATOR, "Moderator"),
+    ]
+

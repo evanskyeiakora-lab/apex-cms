@@ -6,157 +6,355 @@ Users
 
 {% block content %}
 
+<!-- Page Header -->
+
 <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <h2>
-        Users
-    </h2>
+    <div>
 
-   {# <a href="{{ url_for('users.create') }}"
-       class="btn btn-primary">
+        <h2 class="fw-bold">
+            Users
+        </h2>
 
-        <i class="fas fa-plus"></i>
-
-        New User
-
-    </a>#}
-
-</div>
-
-<form method="GET" class="mb-3">
-
-    <div class="input-group">
-
-        <input
-            type="text"
-            class="form-control"
-            name="search"
-            placeholder="Search users..."
-            value="{{ search }}"
-        >
-
-        <button class="btn btn-outline-primary">
-
-            Search
-
-        </button>
+        <p class="text-muted mb-0">
+            Manage system users and administrators.
+        </p>
 
     </div>
 
-</form>
+    <div>
 
-<div class="card shadow-sm">
+        <a href="{{ url_for('users.create') }}"
+           class="btn btn-primary">
 
-    <div class="table-responsive">
+            <i class="fas fa-user-plus me-1"></i>
 
-        <table class="table table-hover align-middle mb-0">
+            New User
 
-            <thead class="table-light">
-
-                <tr>
-
-                    <th>Name</th>
-
-                    <th>Username</th>
-
-                    <th>Email</th>
-
-                    <th>Role</th>
-
-                    <th>Status</th>
-
-                    <th width="180">Actions</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-            {% for user in users.items %}
-
-                <tr>
-
-                    <td>
-
-                        {{ user.full_name }}
-
-                    </td>
-
-                    <td>
-
-                        {{ user.username }}
-
-                    </td>
-
-                    <td>
-
-                        {{ user.email }}
-
-                    </td>
-
-                    <td>
-
-                        {{ user.role }}
-
-                    </td>
-
-                    <td>
-
-                        {% if user.is_active %}
-
-                            <span class="badge bg-success">
-
-                                Active
-
-                            </span>
-
-                        {% else %}
-
-                            <span class="badge bg-danger">
-
-                                Disabled
-
-                            </span>
-
-                        {% endif %}
-
-                    </td>
-
-                    <td>
-
-                        {#<a href="{{ url_for('users.edit', id=user.id) }}"
-                           class="btn btn-sm btn-warning">
-
-                            Edit
-
-                        </a>#}
-
-                    </td>
-
-                </tr>
-
-            {% else %}
-
-                <tr>
-
-                    <td colspan="6"
-                        class="text-center py-5">
-
-                        No users found.
-
-                    </td>
-
-                </tr>
-
-            {% endfor %}
-
-            </tbody>
-
-        </table>
+        </a>
 
     </div>
 
 </div>
+
+<!-- Search -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body">
+
+        <form method="GET">
+
+            <div class="row">
+
+                <div class="col-md-10">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search by name, username or email">
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button
+                        class="btn btn-primary w-100">
+
+                        <i class="fas fa-search"></i>
+
+                        Search
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- Users Table -->
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-header bg-white">
+
+        <strong>
+
+            Users List
+
+        </strong>
+
+    </div>
+
+    <div class="card-body p-0">
+
+        {% if users.items %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th width="180">Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for user in users.items %}
+
+                    <tr>
+
+                        <td width="70">
+
+                            {% if user.photo %}
+
+                                <img
+                                    src="{{ url_for('static', filename='uploads/users/' + user.photo) }}"
+                                    class="rounded-circle"
+                                    width="45"
+                                    height="45"
+                                    style="object-fit:cover;">
+
+                            {% else %}
+
+                                <img
+                                    src="{{ url_for('static', filename='images/avatar.png') }}"
+                                    class="rounded-circle"
+                                    width="45"
+                                    height="45">
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <strong>
+
+                                {{ user.full_name }}
+
+                            </strong>
+
+                        </td>
+
+                        <td>
+
+                            {{ user.username }}
+
+                        </td>
+
+                        <td>
+
+                            {{ user.email }}
+
+                        </td>
+
+                        <td>
+
+                            {% if user.role == "Super Admin" %}
+
+                                <span class="badge bg-danger">
+
+                                    {{ user.role }}
+
+                                </span>
+
+                            {% elif user.role == "Administrator" %}
+
+                                <span class="badge bg-primary">
+
+                                    {{ user.role }}
+
+                                </span>
+
+                            {% elif user.role == "Editor" %}
+
+                                <span class="badge bg-success">
+
+                                    {{ user.role }}
+
+                                </span>
+
+                            {% elif user.role == "Author" %}
+
+                                <span class="badge bg-info">
+
+                                    {{ user.role }}
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+
+                                    {{ user.role }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if user.is_active %}
+
+                                <span class="badge bg-success">
+
+                                    Active
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+
+                                    Inactive
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="btn-group btn-group-sm">
+
+                                <a
+                                    href="{{ url_for('users.detail', id=user.id) }}"
+                                    class="btn btn-outline-info"
+                                    title="View">
+
+                                    <i class="fas fa-eye"></i>
+
+                                </a>
+
+                                <a
+                                    href="{{ url_for('users.edit', id=user.id) }}"
+                                    class="btn btn-outline-primary"
+                                    title="Edit">
+
+                                    <i class="fas fa-edit"></i>
+
+                                </a>
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('users.delete', id=user.id) }}"
+                                    class="d-inline">
+
+                                    <button
+                                        class="btn btn-outline-danger"
+                                        onclick="return confirm('Delete this user?')">
+
+                                        <i class="fas fa-trash"></i>
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <i class="fas fa-users"></i>
+
+            <h4>
+
+                No Users Found
+
+            </h4>
+
+            <p>
+
+                Click the button below to create your first user.
+
+            </p>
+
+            <a
+                href="{{ url_for('users.create') }}"
+                class="btn btn-primary">
+
+                <i class="fas fa-user-plus me-1"></i>
+
+                Create User
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- Pagination -->
+
+{% if users.pages > 1 %}
+
+<nav class="mt-4">
+
+    <ul class="pagination justify-content-center">
+
+        {% for page_num in users.iter_pages() %}
+
+            {% if page_num %}
+
+                <li class="page-item {% if page_num == users.page %}active{% endif %}">
+
+                    <a
+                        class="page-link"
+                        href="{{ url_for('users.index', page=page_num, search=search) }}">
+
+                        {{ page_num }}
+
+                    </a>
+
+                </li>
+
+            {% endif %}
+
+        {% endfor %}
+
+    </ul>
+
+</nav>
+
+{% endif %}
 
 {% endblock %}

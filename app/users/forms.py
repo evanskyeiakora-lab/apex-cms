@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed
 
 from wtforms import (
     StringField,
@@ -9,6 +10,8 @@ from wtforms import (
     SubmitField
 )
 
+from wtforms.fields import EmailField
+
 from wtforms.validators import (
     DataRequired,
     Email,
@@ -17,17 +20,12 @@ from wtforms.validators import (
     Optional
 )
 
-from flask_wtf.file import FileAllowed
+from app.utils.constants import Roles
 
 
-ROLE_CHOICES = [
-    ("Super Admin", "Super Admin"),
-    ("Administrator", "Administrator"),
-    ("Editor", "Editor"),
-    ("Author", "Author"),
-    ("Moderator", "Moderator"),
-]
-
+# ==========================================================
+# Create User Form
+# ==========================================================
 
 class UserForm(FlaskForm):
 
@@ -55,7 +53,7 @@ class UserForm(FlaskForm):
         ]
     )
 
-    email = StringField(
+    email = EmailField(
         "Email Address",
         validators=[
             DataRequired(),
@@ -73,8 +71,10 @@ class UserForm(FlaskForm):
 
     role = SelectField(
         "Role",
-        choices=ROLE_CHOICES,
-        validators=[DataRequired()]
+        choices=Roles.CHOICES,
+        validators=[
+            DataRequired()
+        ]
     )
 
     photo = FileField(
@@ -83,7 +83,7 @@ class UserForm(FlaskForm):
             Optional(),
             FileAllowed(
                 ["jpg", "jpeg", "png", "webp"],
-                "Images only."
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
             )
         ]
     )
@@ -92,7 +92,10 @@ class UserForm(FlaskForm):
         "Password",
         validators=[
             DataRequired(),
-            Length(min=8)
+            Length(
+                min=8,
+                message="Password must be at least 8 characters."
+            )
         ]
     )
 
@@ -117,23 +120,128 @@ class UserForm(FlaskForm):
     )
 
 
+# ==========================================================
+# Edit User Form
+# ==========================================================
+
+class EditUserForm(FlaskForm):
+
+    first_name = StringField(
+        "First Name",
+        validators=[
+            DataRequired(),
+            Length(max=100)
+        ]
+    )
+
+    last_name = StringField(
+        "Last Name",
+        validators=[
+            DataRequired(),
+            Length(max=100)
+        ]
+    )
+
+    username = StringField(
+        "Username",
+        validators=[
+            DataRequired(),
+            Length(max=100)
+        ]
+    )
+
+    email = EmailField(
+        "Email Address",
+        validators=[
+            DataRequired(),
+            Email()
+        ]
+    )
+
+    phone = StringField(
+        "Phone Number",
+        validators=[
+            Optional(),
+            Length(max=30)
+        ]
+    )
+
+    role = SelectField(
+        "Role",
+        choices=Roles.CHOICES,
+        validators=[
+            DataRequired()
+        ]
+    )
+
+    photo = FileField(
+        "Profile Photo",
+        validators=[
+            Optional(),
+            FileAllowed(
+                ["jpg", "jpeg", "png", "webp"],
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
+            )
+        ]
+    )
+
+    password = PasswordField(
+        "New Password",
+        validators=[
+            Optional(),
+            Length(
+                min=8,
+                message="Password must be at least 8 characters."
+            )
+        ]
+    )
+
+    confirm_password = PasswordField(
+        "Confirm Password",
+        validators=[
+            Optional(),
+            EqualTo(
+                "password",
+                message="Passwords must match."
+            )
+        ]
+    )
+
+    is_active = BooleanField(
+        "Active"
+    )
+
+    submit = SubmitField(
+        "Update User"
+    )
+
+
+# ==========================================================
+# Change Password Form
+# ==========================================================
+
 class ChangePasswordForm(FlaskForm):
 
     current_password = PasswordField(
         "Current Password",
-        validators=[DataRequired()]
+        validators=[
+            DataRequired()
+        ]
     )
 
     password = PasswordField(
         "New Password",
         validators=[
             DataRequired(),
-            Length(min=8)
+            Length(
+                min=8,
+                message="Password must be at least 8 characters."
+            )
         ]
     )
 
     confirm_password = PasswordField(
-        "Confirm Password",
+        "Confirm New Password",
         validators=[
             DataRequired(),
             EqualTo(

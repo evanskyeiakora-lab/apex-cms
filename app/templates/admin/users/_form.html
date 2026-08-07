@@ -1,105 +1,126 @@
-<form method="POST"
-      enctype="multipart/form-data">
+<div class="card shadow-sm">
 
-    {{ form.hidden_tag() }}
+    <div class="card-body">
 
-    <div class="row">
+        <div class="row">
 
-        <div class="col-md-6 mb-3">
+            <div class="col-md-6 mb-3">
 
-            {{ form.first_name.label }}
+                {{ form.first_name.label(class="form-label") }}
 
-            {{ form.first_name(class="form-control") }}
+                {{ form.first_name(class="form-control") }}
 
-        </div>
+                {% for error in form.first_name.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
 
-        <div class="col-md-6 mb-3">
+            </div>
 
-            {{ form.last_name.label }}
+            <div class="col-md-6 mb-3">
 
-            {{ form.last_name(class="form-control") }}
+                {{ form.last_name.label(class="form-label") }}
 
-        </div>
+                {{ form.last_name(class="form-control") }}
 
-        <div class="col-md-6 mb-3">
+                {% for error in form.last_name.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
 
-            {{ form.username.label }}
-
-            {{ form.username(class="form-control") }}
-
-        </div>
-
-        <div class="col-md-6 mb-3">
-
-            {{ form.email.label }}
-
-            {{ form.email(class="form-control") }}
+            </div>
 
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="row">
 
-            {{ form.phone.label }}
+            <div class="col-md-6 mb-3">
 
-            {{ form.phone(class="form-control") }}
+                {{ form.username.label(class="form-label") }}
+
+                {{ form.username(class="form-control") }}
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                {{ form.email.label(class="form-label") }}
+
+                {{ form.email(class="form-control") }}
+
+            </div>
 
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="row">
 
-            {{ form.role.label }}
+            <div class="col-md-6 mb-3">
 
-            {{ form.role(class="form-select") }}
+                {{ form.phone.label(class="form-label") }}
+
+                {{ form.phone(class="form-control") }}
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                {{ form.role.label(class="form-label") }}
+
+                {{ form.role(class="form-select") }}
+
+            </div>
 
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="mb-3">
 
-            {{ form.photo.label }}
+            {{ form.photo.label(class="form-label") }}
 
             {{ form.photo(class="form-control") }}
 
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="row">
 
-            {{ form.is_active.label }}
+            <div class="col-md-6 mb-3">
 
-            <br>
+                {{ form.password.label(class="form-label") }}
 
-            {{ form.is_active() }}
+                {{ form.password(class="form-control") }}
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                {{ form.confirm_password.label(class="form-label") }}
+
+                {{ form.confirm_password(class="form-control") }}
+
+            </div>
 
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="form-check mb-4">
 
-            {{ form.password.label }}
+            {{ form.is_active(class="form-check-input") }}
 
-            {{ form.password(class="form-control") }}
+            {{ form.is_active.label(class="form-check-label") }}
 
         </div>
 
-        <div class="col-md-6 mb-3">
+        {{ form.hidden_tag() }}
 
-            {{ form.confirm_password.label }}
+        <div class="d-flex gap-2">
 
-            {{ form.confirm_password(class="form-control") }}
+            {{ form.submit(class="btn btn-primary") }}
+
+            <a href="{{ url_for('users.index') }}"
+               class="btn btn-outline-secondary">
+
+                Cancel
+
+            </a>
 
         </div>
 
     </div>
 
-    <button class="btn btn-primary">
-
-        Save User
-
-    </button>
-
-    <a href="{{ url_for('users.index') }}"
-       class="btn btn-secondary">
-
-        Cancel
-
-    </a>
-
-</form>
+</div>

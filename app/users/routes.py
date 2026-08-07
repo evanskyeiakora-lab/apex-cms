@@ -1,21 +1,39 @@
 from flask import (
     render_template,
-    request
+    request,
+    redirect,
+    url_for,
+    flash
 )
 
-from flask_login import login_required
+from flask_login import (
+    login_required,
+    current_user
+)
 
 from . import users_bp
 
+from .forms import (
+    UserForm,
+    EditUserForm,
+    ChangePasswordForm
+)
+
+from .services import UserService
+
 from app.models import User
 
+from app.utils.helpers import flash_success
+from app.utils.permissions import admin_required
 
-# ==========================================
+
+# ==========================================================
 # Users List
-# ==========================================
+# ==========================================================
 
 @users_bp.route("/")
 @login_required
+@admin_required
 def index():
 
     page = request.args.get(
@@ -49,119 +67,236 @@ def index():
             error_out=False
         )
     )
-    
 
     return render_template(
         "admin/users/index.html",
         users=users,
         search=search
     )
-from flask import (
-    render_template,
-    request,
-    redirect,
-    url_for,
-    flash
-)
 
-from app.extensions import db
 
-from .forms import UserForm
-
-from app.utils.file_upload import save_image
-
-# ==========================================
+# ==========================================================
 # Create User
-# ==========================================
+# ==========================================================
 
 @users_bp.route(
     "/create",
     methods=["GET", "POST"]
 )
 @login_required
+@admin_required
 def create():
 
     form = UserForm()
 
     if form.validate_on_submit():
 
-        # Check username
-        if User.query.filter_by(
-            username=form.username.data
-        ).first():
+        try:
+
+            UserService.create_user(form)
+
+            flash_success(
+                "User created successfully."
+            )
+
+            return redirect(
+                url_for("users.index")
+            )
+
+        except ValueError as e:
 
             flash(
-                "Username already exists.",
+                str(e),
                 "danger"
             )
-
-            return render_template(
-                "admin/users/create.html",
-                form=form
-            )
-
-        # Check email
-        if User.query.filter_by(
-            email=form.email.data
-        ).first():
-
-            flash(
-                "Email address already exists.",
-                "danger"
-            )
-
-            return render_template(
-                "admin/users/create.html",
-                form=form
-            )
-
-        filename = None
-
-        if form.photo.data:
-
-            filename = save_image(
-                form.photo.data,
-                "users"
-            )
-
-        user = User(
-
-            first_name=form.first_name.data,
-
-            last_name=form.last_name.data,
-
-            username=form.username.data,
-
-            email=form.email.data,
-
-            phone=form.phone.data,
-
-            photo=filename,
-
-            role=form.role.data,
-
-            is_active=form.is_active.data
-
-        )
-
-        user.set_password(
-            form.password.data
-        )
-
-        db.session.add(user)
-
-        db.session.commit()
-
-        flash(
-            "User created successfully.",
-            "success"
-        )
-
-        return redirect(
-            url_for("users.index")
-        )
 
     return render_template(
         "admin/users/create.html",
         form=form
+    )
+
+
+# ==========================================================
+# Edit User
+# ==========================================================
+
+@users_bp.route(
+    "/<int:id>/edit",
+    methods=["GET", "POST"]
+)
+@login_required
+@admin_required
+def edit(id):
+
+    user = User.query.get_or_404(id)
+
+    form = EditUserForm(obj=user)
+
+    if form.validate_on_submit():
+
+        try:
+
+            UserService.update_user(
+                user,
+                form
+            )
+
+            flash_success(
+                "User updated successfully."
+            )
+
+            return redirect(
+                url_for("users.index")
+            )
+
+        except ValueError as e:
+
+            flash(
+                str(e),
+                "danger"
+            )
+
+    return render_template(
+        "admin/users/edit.html",
+        form=form,
+        user=user
+    )
+
+
+# ==========================================================
+# Delete User
+# ==========================================================
+
+@users_bp.route(
+    "/<int:id>/delete",
+    methods=["POST"]
+)
+@login_required
+@admin_required
+def delete(id):
+
+    user = User.query.get_or_404(id)
+
+    try:
+
+        UserService.delete_user(user)
+
+        flash_success(
+            "User deleted successfully."
+        )
+
+    except ValueError as e:
+
+        flash(
+            str(e),
+            "danger"
+        )
+
+    return redirect(
+        url_for("users.index")
+    )
+
+
+# ==========================================================
+# My Profile
+# ==========================================================
+
+@users_bp.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+
+    form = EditUserForm(obj=current_user)
+
+    if form.validate_on_submit():
+
+        try:
+
+            UserService.update_user(
+                current_user,
+                form,
+                allow_role_change=False
+            )
+
+            flash_success(
+                "Profile updated successfully."
+            )
+
+            return redirect(
+                url_for("users.profile")
+            )
+
+        except ValueError as e:
+
+            flash(
+                str(e),
+                "danger"
+            )
+
+    return render_template(
+        "admin/users/profile.html",
+        form=form
+    )
+
+
+# ==========================================================
+# Change Password
+# ==========================================================
+
+@users_bp.route(
+    "/change-password",
+    methods=["GET", "POST"]
+)
+@login_required
+def change_password():
+
+    form = ChangePasswordForm()
+
+    if form.validate_on_submit():
+
+        if not current_user.check_password(
+            form.current_password.data
+        ):
+
+            flash(
+                "Current password is incorrect.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/users/change_password.html",
+                form=form
+            )
+
+        UserService.change_password(
+            current_user,
+            form.password.data
+        )
+
+        flash_success(
+            "Password changed successfully."
+        )
+
+        return redirect(
+            url_for("users.profile")
+        )
+
+    return render_template(
+        "admin/users/change_password.html",
+        form=form
+    )
+
+# ==========================================================
+# User Details
+# ==========================================================
+
+@users_bp.route("/<int:id>")
+@login_required
+@admin_required
+def detail(id):
+
+    user = User.query.get_or_404(id)
+
+    return render_template(
+        "admin/users/detail.html",
+        user=user
     )
