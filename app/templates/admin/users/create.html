@@ -1,0 +1,25 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}
+Create User
+{% endblock %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-header">
+
+        <h3>Create User</h3>
+
+    </div>
+
+    <div class="card-body">
+
+        {% include "admin/users/_form.html" %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,105 @@
+<form method="POST"
+      enctype="multipart/form-data">
+
+    {{ form.hidden_tag() }}
+
+    <div class="row">
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.first_name.label }}
+
+            {{ form.first_name(class="form-control") }}
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.last_name.label }}
+
+            {{ form.last_name(class="form-control") }}
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.username.label }}
+
+            {{ form.username(class="form-control") }}
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.email.label }}
+
+            {{ form.email(class="form-control") }}
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.phone.label }}
+
+            {{ form.phone(class="form-control") }}
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.role.label }}
+
+            {{ form.role(class="form-select") }}
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.photo.label }}
+
+            {{ form.photo(class="form-control") }}
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.is_active.label }}
+
+            <br>
+
+            {{ form.is_active() }}
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.password.label }}
+
+            {{ form.password(class="form-control") }}
+
+        </div>
+
+        <div class="col-md-6 mb-3">
+
+            {{ form.confirm_password.label }}
+
+            {{ form.confirm_password(class="form-control") }}
+
+        </div>
+
+    </div>
+
+    <button class="btn btn-primary">
+
+        Save User
+
+    </button>
+
+    <a href="{{ url_for('users.index') }}"
+       class="btn btn-secondary">
+
+        Cancel
+
+    </a>
+
+</form>

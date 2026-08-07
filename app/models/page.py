@@ -19,7 +19,15 @@ class Page(db.Model):
     slug = db.Column(
         db.String(200),
         unique=True,
-        nullable=False
+        nullable=False,
+        index=True
+    )
+
+    page_role = db.Column(
+        db.String(50),
+        default="normal",
+        nullable=False,
+        index=True
     )
 
     content = db.Column(

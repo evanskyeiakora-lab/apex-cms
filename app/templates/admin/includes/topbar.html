@@ -1,39 +1,117 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 py-3">
 
     <div class="container-fluid">
 
-        <h4 class="mb-0">
-            <i class="fas fa-tachometer-alt"></i>
-            Dashboard
+        <!-- Mobile Menu Button -->
+        <button class="btn btn-outline-primary d-lg-none"
+                id="sidebarToggle">
+
+            <i class="fas fa-bars"></i>
+
+        </button>
+
+        <!-- Page Title -->
+        <h4 class="mb-0 fw-bold ms-3">
+            {% block page_title %}
+                Dashboard
+            {% endblock %}
         </h4>
 
-        <div class="ms-auto">
+        <div class="ms-auto d-flex align-items-center">
 
-            {% if current_user.is_authenticated %}
+            <!-- Search -->
 
-                <span class="me-3">
-                    <i class="fas fa-user-circle"></i>
-                    {{ current_user.username }}
+            <form class="d-none d-md-flex me-4">
+
+                <div class="input-group">
+
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Search...">
+
+                    <button class="btn btn-primary">
+
+                        <i class="fas fa-search"></i>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+            <!-- Notifications -->
+
+            <button class="btn btn-light position-relative me-3">
+
+                <i class="fas fa-bell"></i>
+
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+
+                    0
+
                 </span>
 
-            {% endif %}
+            </button>
 
-            <a href="/"
-               class="btn btn-outline-primary btn-sm me-2"
-               target="_blank">
+            <!-- User Dropdown -->
 
-                <i class="fas fa-globe"></i>
-                View Website
+            <div class="dropdown">
 
-            </a>
+                <button class="btn btn-light dropdown-toggle"
+                        data-bs-toggle="dropdown">
 
-            <a href="{{ url_for('auth.logout') }}"
-               class="btn btn-danger btn-sm">
+                    <i class="fas fa-user-circle me-2"></i>
 
-                <i class="fas fa-sign-out-alt"></i>
-                Logout
+                    {{ current_user.username if current_user.is_authenticated else "Administrator" }}
 
-            </a>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+
+                    <li>
+
+                        <a class="dropdown-item"
+                           href="#">
+
+                            <i class="fas fa-user me-2"></i>
+
+                            Profile
+
+                        </a>
+
+                    </li>
+
+                    <li>
+
+                        <a class="dropdown-item"
+                           href="{{ url_for('settings.index') }}">
+
+                            <i class="fas fa-gear me-2"></i>
+
+                            Settings
+
+                        </a>
+
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li>
+
+                        <a class="dropdown-item text-danger"
+                           href="{{ url_for('auth.logout') }}">
+
+                            <i class="fas fa-right-from-bracket me-2"></i>
+
+                            Logout
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </div>
 
         </div>
 

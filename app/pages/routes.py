@@ -14,7 +14,7 @@ from .forms import PageForm
 from app.extensions import db
 from app.models import Page
 from app.utils.file_upload import save_image
-
+from app.utils.slug import generate_unique_slug
 
 # ==========================================
 # Pages List
@@ -24,12 +24,21 @@ from app.utils.file_upload import save_image
 @login_required
 def index():
 
-    page = request.args.get("page", 1, type=int)
-    search = request.args.get("search", "")
+    page = request.args.get(
+        "page",
+        1,
+        type=int
+    )
+
+    search = request.args.get(
+        "search",
+        ""
+    )
 
     query = Page.query
 
     if search:
+
         query = query.filter(
             Page.title.ilike(f"%{search}%")
         )
@@ -71,9 +80,39 @@ def create():
                 "pages"
             )
 
+        # Auto-generate slug if left blank
+        slug = form.slug.data.strip()
+
+    if not slug:
+        slug = generate_unique_slug(
+        Page,
+        form.title.data,
+        page.id
+    )
+
+        # Ensure only one page can have a special role
+        if form.page_role.data != "normal":
+
+            existing = Page.query.filter_by(
+                page_role=form.page_role.data
+            ).first()
+
+            if existing:
+
+                flash(
+                    f"The role '{form.page_role.data}' is already assigned to '{existing.title}'.",
+                    "danger"
+                )
+
+                return render_template(
+                    "admin/pages/create.html",
+                    form=form
+                )
+
         page = Page(
             title=form.title.data,
-            slug=form.slug.data,
+            slug=slug,
+            page_role=form.page_role.data,
             content=form.content.data,
             featured_image=filename,
             meta_title=form.meta_title.data,
@@ -98,18 +137,22 @@ def create():
         form=form
     )
 
-
 # ==========================================
 # Edit Page
 # ==========================================
 
-@pages_bp.route("/edit/<int:id>", methods=["GET", "POST"])
+@pages_bp.route(
+    "/edit/<int:id>",
+    methods=["GET", "POST"]
+)
 @login_required
 def edit(id):
 
     page = Page.query.get_or_404(id)
 
-    form = PageForm(obj=page)
+    form = PageForm(
+        obj=page
+    )
 
     if form.validate_on_submit():
 
@@ -118,6 +161,8 @@ def edit(id):
         page.content = form.content.data
         page.meta_title = form.meta_title.data
         page.meta_description = form.meta_description.data
+
+        page.is_home_about = form.is_home_about.data
         page.is_published = form.is_published.data
 
         if form.featured_image.data:
@@ -152,7 +197,9 @@ def edit(id):
 # Delete Page
 # ==========================================
 
-@pages_bp.route("/delete/<int:id>")
+@pages_bp.route(
+    "/delete/<int:id>"
+)
 @login_required
 def delete(id):
 

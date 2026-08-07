@@ -1,16 +1,22 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
 
 from wtforms import (
     StringField,
     TextAreaField,
     BooleanField,
-    SubmitField
+    FileField,
+    SubmitField,
+    SelectField
 )
 
 from wtforms.validators import (
     DataRequired,
-    Length
+    Length,
+    Optional
+)
+
+from flask_wtf.file import (
+    FileAllowed
 )
 
 
@@ -27,36 +33,62 @@ class PageForm(FlaskForm):
     slug = StringField(
         "Slug",
         validators=[
-            DataRequired(),
+            Optional(),
             Length(max=200)
-        ]
+        ],
+        description="Leave blank to generate automatically."
+    )
+
+    page_role = SelectField(
+        "Page Role",
+        choices=[
+            ("normal", "Normal Page"),
+            ("about-us", "Homepage About-us"),
+            ("vision", "Homepage Vision"),
+            ("mission", "Homepage Mission"),
+            ("history", "Homepage History"),
+            ("constitution", "Constitution"),
+            ("footer", "Footer Page")
+        ],
+        default="normal"
     )
 
     content = TextAreaField(
         "Content",
-        validators=[DataRequired()]
+        validators=[
+            DataRequired()
+        ]
     )
 
     featured_image = FileField(
         "Featured Image",
         validators=[
+            Optional(),
             FileAllowed(
                 ["jpg", "jpeg", "png", "webp"],
-                "Images only!"
+                "Images only."
             )
         ]
     )
 
     meta_title = StringField(
-        "Meta Title"
+        "Meta Title",
+        validators=[
+            Optional(),
+            Length(max=255)
+        ]
     )
 
     meta_description = TextAreaField(
-        "Meta Description"
+        "Meta Description",
+        validators=[
+            Optional(),
+            Length(max=500)
+        ]
     )
 
     is_published = BooleanField(
-        "Published",
+        "Publish Page",
         default=True
     )
 

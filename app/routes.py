@@ -1,107 +1,380 @@
-from flask import render_template
+from datetime import date
 
-from app import db
-from app.models import (
-    Settings,
-    HeroSlide,
-    News,
-    Event,
-    Gallery,
-    Member
+from flask import (
+    render_template,
+    request,
+    abort
 )
 
 from . import main_bp
 
+from app.models import (
+    News,
+    HeroSlide,
+    Page,
+    Event,
+    Gallery,
+    Leader,
+    Member
+)
+
 
 # ==========================================
-# Home
+# HOME
 # ==========================================
 
 @main_bp.route("/")
-def index():
+def home():
 
-    settings = Settings.query.first()
-
-    hero_slides = (
+    slides = (
         HeroSlide.query
-        .filter_by(is_published=True)
+        .filter_by(is_active=True)
         .order_by(HeroSlide.display_order.asc())
         .all()
     )
 
+    # CMS Homepage Pages
+    about_page = (
+        Page.query
+        .filter_by(
+            page_role="about-us",
+            is_published=True
+        )
+        .first()
+    )
+
+    vision_page = (
+        Page.query
+        .filter_by(
+            page_role="vision",
+            is_published=True
+        )
+        .first()
+    )
+
+    mission_page = (
+        Page.query
+        .filter_by(
+            page_role="mission",
+            is_published=True
+        )
+        .first()
+    )
+
+    history_page = (
+        Page.query
+        .filter_by(
+            page_role="history",
+            is_published=True
+        )
+        .first()
+    )
+
     latest_news = (
         News.query
-        .filter_by(is_published=True)
-        .order_by(News.created_at.desc())
+        .filter_by(status="published")
+        .order_by(News.published_at.desc())
         .limit(3)
         .all()
     )
 
     upcoming_events = (
         Event.query
-        .filter_by(is_published=True)
-        .order_by(Event.event_date.asc())
+        .filter(
+            Event.is_published == True,
+            Event.start_date >= date.today()
+        )
+        .order_by(Event.start_date.asc())
         .limit(3)
         .all()
     )
 
-    gallery = (
+    featured_gallery = (
         Gallery.query
-        .filter_by(is_published=True)
-        .order_by(Gallery.created_at.desc())
+        .filter_by(
+            is_published=True,
+            is_featured=True
+        )
+        .order_by(
+            Gallery.display_order.asc(),
+            Gallery.created_at.desc()
+        )
         .limit(8)
         .all()
     )
 
     leaders = (
-        Member.query
-        .filter_by(is_published=True)
-        .order_by(Member.display_order.asc())
+        Leader.query
+        .filter_by(is_active=True)
+        .order_by(Leader.display_order.asc())
         .limit(8)
         .all()
     )
 
+    stats = {
+
+        "members_count": Member.query.count(),
+
+        "leaders_count": Leader.query.filter_by(
+            is_active=True
+        ).count(),
+
+        "news_count": News.query.filter_by(
+            status="published"
+        ).count(),
+
+        "events_count": Event.query.filter_by(
+            is_published=True
+        ).count(),
+
+        "gallery_count": Gallery.query.filter_by(
+            is_published=True
+        ).count()
+
+    }
+
     return render_template(
         "index.html",
-        settings=settings,
-        hero_slides=hero_slides,
+        slides=slides,
+        about_page=about_page,
+        vision_page=vision_page,
+        mission_page=mission_page,
+        history_page=history_page,
         latest_news=latest_news,
         upcoming_events=upcoming_events,
-        gallery=gallery,
+        featured_gallery=featured_gallery,
         leaders=leaders,
+        stats=stats
     )
 
 
 # ==========================================
-# About
+# DYNAMIC CMS PAGES
 # ==========================================
 
-@main_bp.route("/about")
-def about():
-    return render_template("about.html")
+@main_bp.route("/<slug>")
+def page(slug):
 
+    reserved_routes = {
+        "admin",
+        "auth",
+        "news",
+        "events",
+        "gallery",
+        "contact",
+        "static",
+        "favicon.ico"
+    }
 
-# ==========================================
-# Contact
-# ==========================================
+    if slug.lower() in reserved_routes:
+        abort(404)
 
-@main_bp.route("/contact")
-def contact():
-    return render_template("contact.html")
-
-    from app.models import Settings
-
-@main_bp.route("/")
-def index():
-
-    settings = Settings.query.first()
-
-    print("PUBLIC SITE SETTINGS")
-    print(settings.id)
-    print(settings.site_name)
+    page = (
+        Page.query
+        .filter_by(
+            slug=slug,
+            is_published=True
+        )
+        .first_or_404()
+    )
 
     return render_template(
-        "index.html",
-        settings=settings,
-        # ...
+        "page.html",
+        page=page
+    )
+
+
+# ==========================================
+# NEWS
+# ==========================================
+
+@main_bp.route("/news")
+def news():
+
+    page = request.args.get(
+        "page",
+        1,
+        type=int
+    )
+
+    news_items = (
+        News.query
+        .filter_by(status="published")
+        .order_by(News.published_at.desc())
+        .paginate(
+            page=page,
+            per_page=9,
+            error_out=False
+        )
+    )
+
+    return render_template(
+        "news/index.html",
+        news_items=news_items
+    )
+
+
+# ==========================================
+# NEWS DETAILS
+# ==========================================
+
+@main_bp.route("/news/<slug>")
+def news_detail(slug):
+
+    article = (
+        News.query
+        .filter_by(
+            slug=slug,
+            status="published"
+        )
+        .first_or_404()
+    )
+
+    related_news = (
+        News.query
+        .filter(
+            News.status == "published",
+            News.id != article.id
+        )
+        .order_by(News.published_at.desc())
+        .limit(5)
+        .all()
+    )
+
+    return render_template(
+        "news/detail.html",
+        article=article,
+        related_news=related_news
+    )
+
+
+# ==========================================
+# EVENTS
+# ==========================================
+
+@main_bp.route("/events")
+def events():
+
+    page = request.args.get(
+        "page",
+        1,
+        type=int
+    )
+
+    events = (
+        Event.query
+        .filter_by(is_published=True)
+        .order_by(Event.start_date.asc())
+        .paginate(
+            page=page,
+            per_page=9,
+            error_out=False
+        )
+    )
+
+    return render_template(
+        "events/index.html",
+        events=events
+    )
+
+
+# ==========================================
+# EVENT DETAILS
+# ==========================================
+
+@main_bp.route("/events/<slug>")
+def event_detail(slug):
+
+    event = (
+        Event.query
+        .filter_by(
+            slug=slug,
+            is_published=True
+        )
+        .first_or_404()
+    )
+
+    related_events = (
+        Event.query
+        .filter(
+            Event.is_published == True,
+            Event.id != event.id
+        )
+        .order_by(Event.start_date.asc())
+        .limit(3)
+        .all()
+    )
+
+    return render_template(
+        "events/detail.html",
+        event=event,
+        related_events=related_events
+    )
+
+
+# ==========================================
+# GALLERY
+# ==========================================
+
+@main_bp.route("/gallery")
+def gallery():
+
+    page = request.args.get(
+        "page",
+        1,
+        type=int
+    )
+
+    galleries = (
+        Gallery.query
+        .filter_by(is_published=True)
+        .order_by(
+            Gallery.display_order.asc(),
+            Gallery.created_at.desc()
+        )
+        .paginate(
+            page=page,
+            per_page=12,
+            error_out=False
+        )
+    )
+
+    return render_template(
+        "gallery/index.html",
+        galleries=galleries
+    )
+
+
+# ==========================================
+# GALLERY DETAILS
+# ==========================================
+
+@main_bp.route("/gallery/<slug>")
+def gallery_detail(slug):
+
+    gallery = (
+        Gallery.query
+        .filter_by(
+            slug=slug,
+            is_published=True
+        )
+        .first_or_404()
+    )
+
+    related_images = (
+        Gallery.query
+        .filter(
+            Gallery.is_published == True,
+            Gallery.category == gallery.category,
+            Gallery.id != gallery.id
+        )
+        .order_by(Gallery.created_at.desc())
+        .limit(6)
+        .all()
+    )
+
+    return render_template(
+        "gallery/detail.html",
+        gallery=gallery,
+        related_images=related_images
     )

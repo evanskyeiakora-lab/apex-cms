@@ -2,7 +2,8 @@ from datetime import date
 
 from flask import (
     render_template,
-    request
+    request,
+    abort
 )
 
 from . import main_bp
@@ -30,12 +31,40 @@ def home():
         .filter_by(is_active=True)
         .order_by(HeroSlide.display_order.asc())
         .all()
-)
+    )
 
+    # Homepage Pages
     about_page = (
         Page.query
         .filter_by(
-            slug="about",
+            page_role="about-us",
+            is_published=True
+        )
+        .first()
+    )
+
+    vision_page = (
+        Page.query
+        .filter_by(
+            page_role="vision",
+            is_published=True
+        )
+        .first()
+    )
+
+    mission_page = (
+        Page.query
+        .filter_by(
+            page_role="mission",
+            is_published=True
+        )
+        .first()
+    )
+
+    history_page = (
+        Page.query
+        .filter_by(
+            page_role="history",
             is_published=True
         )
         .first()
@@ -83,29 +112,28 @@ def home():
     )
 
     stats = {
-    "members_count": Member.query.count(),
-
-    "leaders_count": Leader.query.filter_by(
-        is_active=True
-    ).count(),
-
-    "news_count": News.query.filter_by(
-        status="published"
-    ).count(),
-
-    "events_count": Event.query.filter_by(
-        is_published=True
-    ).count(),
-
-    "gallery_count": Gallery.query.filter_by(
-        is_published=True
-    ).count()
-}
+        "members_count": Member.query.count(),
+        "leaders_count": Leader.query.filter_by(
+            is_active=True
+        ).count(),
+        "news_count": News.query.filter_by(
+            status="published"
+        ).count(),
+        "events_count": Event.query.filter_by(
+            is_published=True
+        ).count(),
+        "gallery_count": Gallery.query.filter_by(
+            is_published=True
+        ).count()
+    }
 
     return render_template(
         "index.html",
         slides=slides,
         about_page=about_page,
+        vision_page=vision_page,
+        mission_page=mission_page,
+        history_page=history_page,
         latest_news=latest_news,
         upcoming_events=upcoming_events,
         featured_gallery=featured_gallery,

@@ -31,8 +31,9 @@ def create_app():
     from .settings import settings_bp
     from .pages import pages_bp
     from .events import events_bp
-
+    from .users import users_bp
     # Register Blueprints
+
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(admin_bp, url_prefix="/admin")
@@ -44,7 +45,7 @@ def create_app():
     app.register_blueprint(settings_bp)
     app.register_blueprint(pages_bp)
     app.register_blueprint(events_bp)
-
+    app.register_blueprint(users_bp)
     # Global Context Processors
     app.context_processor(inject_settings)
 
