@@ -23,8 +23,8 @@ from .helpers import (
     flash_success,
     flash_error,
     flash_warning,
+    flash_info,
     truncate_text,
-    get_settings,
 )
 
 from .mixins import (
