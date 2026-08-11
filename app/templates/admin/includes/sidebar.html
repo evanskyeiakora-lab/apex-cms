@@ -1,216 +1,225 @@
-<div class="p-4 text-center border-bottom">
+<div class="sidebar-header">
 
-    <img
-        src="{{ url_for('static', filename='images/logo.png') }}"
-        class="img-fluid mb-2"
-        style="max-height:70px;">
+    <a href="{{ url_for('admin.dashboard') }}"
+       class="brand">
 
-    <h5 class="text-white fw-bold mt-3">
-    Apex CMS
-</h5>
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             alt="Apex CMS Logo"
+             class="brand-logo">
+
+        <div class="brand-text">
+
+            <h4>Apex CMS</h4>
+
+            <small>Administration</small>
+
+        </div>
+
+    </a>
 
 </div>
 
-<ul class="nav flex-column py-3">
+<nav class="sidebar-nav">
 
-    <!-- Dashboard -->
+    <ul>
 
-    <li class="nav-item">
+        <!-- ===================== -->
+        <!-- Dashboard -->
+        <!-- ===================== -->
 
-        <a
-            href="{{ url_for('admin.dashboard') }}"
-            class="nav-link text-white {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+        <li class="nav-title">
 
-            <i class="fas fa-gauge-high me-2"></i>
+            MAIN
 
-            Dashboard
+        </li>
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('admin.dashboard') }}"
+               class="{% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
 
-    <!-- ========================= -->
-    <!-- Content -->
-    <!-- ========================= -->
+                <i class="fas fa-gauge-high"></i>
 
-    <li class="nav-header text-uppercase text-secondary px-3 mt-3 mb-2">
+                <span>Dashboard</span>
 
-        Content
+            </a>
 
-    </li>
+        </li>
 
-    <li class="nav-item">
+        <!-- ===================== -->
+        <!-- Content -->
+        <!-- ===================== -->
 
-        <a
-            href="{{ url_for('hero.index') }}"
-            class="nav-link text-white {% if request.endpoint and request.endpoint.startswith('hero.') %}active{% endif %}">
+        <li class="nav-title">
 
-            <i class="fas fa-images me-2"></i>
+            CONTENT
 
-            Hero Slider
+        </li>
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('hero.index') }}"
+               class="{% if request.endpoint and request.endpoint.startswith('hero.') %}active{% endif %}">
 
-    <li class="nav-item">
+                <i class="fas fa-images"></i>
 
-        <a
-            href="{{ url_for('pages.index') }}"
-            class="nav-link text-white {% if request.endpoint and request.endpoint.startswith('pages.') %}active{% endif %}">
+                <span>Hero Slider</span>
 
-            <i class="fas fa-file-alt me-2"></i>
+            </a>
 
-            Pages
+        </li>
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('pages.index') }}"
+               class="{% if request.endpoint and request.endpoint.startswith('pages.') %}active{% endif %}">
 
-    <li class="nav-item">
+                <i class="fas fa-file-alt"></i>
 
-        <a
-            href="{{ url_for('news.index') }}"
-            class="nav-link text-white {% if request.endpoint and request.endpoint.startswith('news.') %}active{% endif %}">
+                <span>Pages</span>
 
-            <i class="fas fa-newspaper me-2"></i>
+            </a>
 
-            News
+        </li>
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('news.index') }}"
+               class="{% if request.endpoint and request.endpoint.startswith('news.') %}active{% endif %}">
 
-    <li class="nav-item">
+                <i class="fas fa-newspaper"></i>
 
-        <a
-            href="{{ url_for('events.index') }}"
-            class="nav-link text-white {% if request.endpoint and request.endpoint.startswith('events.') %}active{% endif %}">
+                <span>News</span>
 
-            <i class="fas fa-calendar-days me-2"></i>
+            </a>
 
-            Events
+        </li>
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('events.index') }}"
+               class="{% if request.endpoint and request.endpoint.startswith('events.') %}active{% endif %}">
 
-    <li class="nav-item">
+                <i class="fas fa-calendar-days"></i>
 
-        <a
-            href="{{ url_for('gallery.index') }}"
-            class="nav-link text-white {% if request.endpoint and request.endpoint.startswith('gallery.') %}active{% endif %}">
+                <span>Events</span>
 
-            <i class="fas fa-image me-2"></i>
+            </a>
 
-            Gallery
+        </li>
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('gallery.index') }}"
+               class="{% if request.endpoint and request.endpoint.startswith('gallery.') %}active{% endif %}">
 
-    <!-- ========================= -->
-    <!-- People -->
-    <!-- ========================= -->
+                <i class="fas fa-image"></i>
 
-    <li class="nav-header text-uppercase text-secondary px-3 mt-3 mb-2">
+                <span>Gallery</span>
 
-        People
+            </a>
 
-    </li>
+        </li>
 
-    <li class="nav-item">
+        <!-- ===================== -->
+        <!-- People -->
+        <!-- ===================== -->
 
-        <a
-            href="{{ url_for('members.index') }}"
-            class="nav-link text-white {% if request.endpoint and request.endpoint.startswith('members.') %}active{% endif %}">
+        <li class="nav-title">
 
-            <i class="fas fa-users me-2"></i>
+            PEOPLE
 
-            Members
+        </li>
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('members.index') }}"
+               class="{% if request.endpoint and request.endpoint.startswith('members.') %}active{% endif %}">
 
-    <!-- ========================= -->
-    <!-- Communication -->
-    <!-- ========================= -->
+                <i class="fas fa-users"></i>
 
-    <li class="nav-header text-uppercase text-secondary px-3 mt-3 mb-2">
+                <span>Members</span>
 
-        Communication
+            </a>
 
-    </li>
+        </li>
 
-    <li class="nav-item">
+        <!-- ===================== -->
+        <!-- Communication -->
+        <!-- ===================== -->
 
-        <a
-            href="{{ url_for('contact.admin_index') }}"
-            class="nav-link text-white {% if request.endpoint and request.endpoint.startswith('contact.') %}active{% endif %}">
+        <li class="nav-title">
 
-            <i class="fas fa-envelope me-2"></i>
+            COMMUNICATION
 
-            Messages
+        </li>
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('contact.admin_index') }}"
+               class="{% if request.endpoint and request.endpoint.startswith('contact.') %}active{% endif %}">
 
-    <!-- ========================= -->
-    <!-- System -->
-    <!-- ========================= -->
+                <i class="fas fa-envelope"></i>
 
-    <li class="nav-header text-uppercase text-secondary px-3 mt-3 mb-2">
+                <span>Messages</span>
 
-        System
+            </a>
 
-    </li>
+        </li>
 
-    {% if current_user.is_admin %}
+        <!-- ===================== -->
+        <!-- System -->
+        <!-- ===================== -->
 
-    <li class="nav-item">
+        <li class="nav-title">
 
-        <a
-            href="{{ url_for('users.index') }}"
-            class="nav-link text-white {% if request.endpoint and request.endpoint.startswith('users.') %}active{% endif %}">
+            SYSTEM
 
-            <i class="fas fa-user-shield me-2"></i>
+        </li>
 
-            Users
+        {% if current_user.is_admin %}
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('users.index') }}"
+               class="{% if request.endpoint and request.endpoint.startswith('users.') %}active{% endif %}">
 
-    {% endif %}
+                <i class="fas fa-user-shield"></i>
 
-    <li class="nav-item">
+                <span>Users</span>
 
-        <a
-            href="{{ url_for('settings.index') }}"
-            class="nav-link text-white {% if request.endpoint and request.endpoint.startswith('settings.') %}active{% endif %}">
+            </a>
 
-            <i class="fas fa-gear me-2"></i>
+        </li>
 
-            Settings
+        {% endif %}
 
-        </a>
+        <li>
 
-    </li>
+            <a href="{{ url_for('settings.index') }}"
+               class="{% if request.endpoint and request.endpoint.startswith('settings.') %}active{% endif %}">
 
-    <li class="nav-item">
+                <i class="fas fa-gear"></i>
 
-        <a
-            href="{{ url_for('auth.logout') }}"
-            class="nav-link text-danger">
+                <span>Settings</span>
 
-            <i class="fas fa-right-from-bracket me-2"></i>
+            </a>
 
-            Logout
+        </li>
 
-        </a>
+    </ul>
 
-    </li>
+</nav>
 
-</ul>
+<div class="sidebar-footer">
+
+    <a href="{{ url_for('auth.logout') }}"
+       class="logout-link">
+
+        <i class="fas fa-right-from-bracket"></i>
+
+        <span>Logout</span>
+
+    </a>
+
+</div>

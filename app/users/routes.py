@@ -52,15 +52,20 @@ def index():
     if search:
 
         query = query.filter(
-            User.first_name.ilike(f"%{search}%") |
-            User.last_name.ilike(f"%{search}%") |
-            User.username.ilike(f"%{search}%") |
+            User.first_name.ilike(f"%{search}%")
+            |
+            User.last_name.ilike(f"%{search}%")
+            |
+            User.username.ilike(f"%{search}%")
+            |
             User.email.ilike(f"%{search}%")
         )
 
     users = (
         query
-        .order_by(User.first_name.asc())
+        .order_by(
+            User.first_name.asc()
+        )
         .paginate(
             page=page,
             per_page=10,
@@ -130,7 +135,24 @@ def edit(id):
 
     user = User.query.get_or_404(id)
 
-    form = EditUserForm(obj=user)
+    # Only a Super Admin can edit a Super Admin
+    if (
+        user.is_super_admin
+        and not current_user.is_super_admin
+    ):
+
+        flash(
+            "Only a Super Admin can edit a Super Admin account.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("users.index")
+        )
+
+    form = EditUserForm(
+        obj=user
+    )
 
     if form.validate_on_submit():
 
@@ -177,6 +199,21 @@ def delete(id):
 
     user = User.query.get_or_404(id)
 
+    # Only a Super Admin can delete a Super Admin
+    if (
+        user.is_super_admin
+        and not current_user.is_super_admin
+    ):
+
+        flash(
+            "Only a Super Admin can delete a Super Admin account.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("users.index")
+        )
+
     try:
 
         UserService.delete_user(user)
@@ -201,11 +238,16 @@ def delete(id):
 # My Profile
 # ==========================================================
 
-@users_bp.route("/profile", methods=["GET", "POST"])
+@users_bp.route(
+    "/profile",
+    methods=["GET", "POST"]
+)
 @login_required
 def profile():
 
-    form = EditUserForm(obj=current_user)
+    form = EditUserForm(
+        obj=current_user
+    )
 
     if form.validate_on_submit():
 
@@ -285,11 +327,14 @@ def change_password():
         form=form
     )
 
+
 # ==========================================================
 # User Details
 # ==========================================================
 
-@users_bp.route("/<int:id>")
+@users_bp.route(
+    "/<int:id>"
+)
 @login_required
 @admin_required
 def detail(id):

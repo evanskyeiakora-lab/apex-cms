@@ -24,6 +24,35 @@ from app.utils.constants import Roles
 
 
 # ==========================================================
+# Helper
+# ==========================================================
+
+def get_role_choices():
+    """
+    Return role choices based on the currently
+    authenticated user's privileges.
+
+    Super Admins can assign all roles.
+    Administrators cannot create/promote users
+    to Super Admin.
+    """
+
+    from flask_login import current_user
+
+    choices = list(Roles.CHOICES)
+
+    if not current_user.is_super_admin:
+
+        choices = [
+            choice
+            for choice in choices
+            if choice[0] != "Super Admin"
+        ]
+
+    return choices
+
+
+# ==========================================================
 # Create User Form
 # ==========================================================
 
@@ -71,7 +100,7 @@ class UserForm(FlaskForm):
 
     role = SelectField(
         "Role",
-        choices=Roles.CHOICES,
+        choices=[],
         validators=[
             DataRequired()
         ]
@@ -118,6 +147,12 @@ class UserForm(FlaskForm):
     submit = SubmitField(
         "Save User"
     )
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.role.choices = get_role_choices()
 
 
 # ==========================================================
@@ -168,7 +203,7 @@ class EditUserForm(FlaskForm):
 
     role = SelectField(
         "Role",
-        choices=Roles.CHOICES,
+        choices=[],
         validators=[
             DataRequired()
         ]
@@ -214,6 +249,12 @@ class EditUserForm(FlaskForm):
     submit = SubmitField(
         "Update User"
     )
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.role.choices = get_role_choices()
 
 
 # ==========================================================
