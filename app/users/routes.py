@@ -28,6 +28,30 @@ from app.utils.permissions import admin_required
 
 
 # ==========================================================
+# Helper
+# ==========================================================
+
+def restrict_super_admin_role(form):
+    """
+    Hide the Super Admin role from non-Super-Admin users.
+
+    The service layer also performs server-side protection,
+    so removing the option from the form is not the only
+    security measure.
+    """
+
+    if not current_user.is_super_admin:
+
+        form.role.choices = [
+            choice
+            for choice in form.role.choices
+            if choice[0] != "Super Admin"
+        ]
+
+    return form
+
+
+# ==========================================================
 # Users List
 # ==========================================================
 
@@ -52,13 +76,21 @@ def index():
     if search:
 
         query = query.filter(
-            User.first_name.ilike(f"%{search}%")
+            User.first_name.ilike(
+                f"%{search}%"
+            )
             |
-            User.last_name.ilike(f"%{search}%")
+            User.last_name.ilike(
+                f"%{search}%"
+            )
             |
-            User.username.ilike(f"%{search}%")
+            User.username.ilike(
+                f"%{search}%"
+            )
             |
-            User.email.ilike(f"%{search}%")
+            User.email.ilike(
+                f"%{search}%"
+            )
         )
 
     users = (
@@ -94,11 +126,42 @@ def create():
 
     form = UserForm()
 
+    # ------------------------------------------------------
+    # Hide Super Admin from non-Super-Admins
+    # ------------------------------------------------------
+
+    restrict_super_admin_role(form)
+
+    # ------------------------------------------------------
+    # Process form
+    # ------------------------------------------------------
+
     if form.validate_on_submit():
+
+        # --------------------------------------------------
+        # Server-side protection
+        # --------------------------------------------------
+
+        if (
+            form.role.data == "Super Admin"
+            and not current_user.is_super_admin
+        ):
+
+            flash(
+                "Only a Super Admin can create a Super Admin account.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/users/create.html",
+                form=form
+            )
 
         try:
 
-            UserService.create_user(form)
+            UserService.create_user(
+                form
+            )
 
             flash_success(
                 "User created successfully."
@@ -133,9 +196,14 @@ def create():
 @admin_required
 def edit(id):
 
-    user = User.query.get_or_404(id)
+    user = User.query.get_or_404(
+        id
+    )
 
-    # Only a Super Admin can edit a Super Admin
+    # ------------------------------------------------------
+    # Protect Super Admin accounts
+    # ------------------------------------------------------
+
     if (
         user.is_super_admin
         and not current_user.is_super_admin
@@ -150,17 +218,52 @@ def edit(id):
             url_for("users.index")
         )
 
+    # ------------------------------------------------------
+    # Create form
+    # ------------------------------------------------------
+
     form = EditUserForm(
         obj=user
     )
 
+    # ------------------------------------------------------
+    # Hide Super Admin from non-Super-Admins
+    # ------------------------------------------------------
+
+    restrict_super_admin_role(form)
+
+    # ------------------------------------------------------
+    # Process form
+    # ------------------------------------------------------
+
     if form.validate_on_submit():
+
+        # --------------------------------------------------
+        # Server-side role protection
+        # --------------------------------------------------
+
+        if (
+            form.role.data == "Super Admin"
+            and not current_user.is_super_admin
+        ):
+
+            flash(
+                "Only a Super Admin can assign the Super Admin role.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/users/edit.html",
+                form=form,
+                user=user
+            )
 
         try:
 
             UserService.update_user(
                 user,
-                form
+                form,
+                allow_role_change=True
             )
 
             flash_success(
@@ -197,9 +300,14 @@ def edit(id):
 @admin_required
 def delete(id):
 
-    user = User.query.get_or_404(id)
+    user = User.query.get_or_404(
+        id
+    )
 
-    # Only a Super Admin can delete a Super Admin
+    # ------------------------------------------------------
+    # Protect Super Admin accounts
+    # ------------------------------------------------------
+
     if (
         user.is_super_admin
         and not current_user.is_super_admin
@@ -216,7 +324,9 @@ def delete(id):
 
     try:
 
-        UserService.delete_user(user)
+        UserService.delete_user(
+            user
+        )
 
         flash_success(
             "User deleted successfully."
@@ -248,6 +358,22 @@ def profile():
     form = EditUserForm(
         obj=current_user
     )
+
+    # ------------------------------------------------------
+    # A user cannot change their own role from profile
+    # ------------------------------------------------------
+
+    form.role.data = current_user.role
+
+    # ------------------------------------------------------
+    # Hide Super Admin option if necessary
+    # ------------------------------------------------------
+
+    restrict_super_admin_role(form)
+
+    # ------------------------------------------------------
+    # Process form
+    # ------------------------------------------------------
 
     if form.validate_on_submit():
 
@@ -295,6 +421,10 @@ def change_password():
 
     if form.validate_on_submit():
 
+        # --------------------------------------------------
+        # Verify current password
+        # --------------------------------------------------
+
         if not current_user.check_password(
             form.current_password.data
         ):
@@ -308,6 +438,10 @@ def change_password():
                 "admin/users/change_password.html",
                 form=form
             )
+
+        # --------------------------------------------------
+        # Change password
+        # --------------------------------------------------
 
         UserService.change_password(
             current_user,
@@ -339,7 +473,9 @@ def change_password():
 @admin_required
 def detail(id):
 
-    user = User.query.get_or_404(id)
+    user = User.query.get_or_404(
+        id
+    )
 
     return render_template(
         "admin/users/detail.html",

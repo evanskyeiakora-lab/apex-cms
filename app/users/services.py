@@ -19,16 +19,25 @@ class UserService:
     @staticmethod
     def create_user(form):
 
-        # Administrators cannot create Super Admin accounts
+        # -------------------------------------------------
+        # Super Admin protection
+        # -------------------------------------------------
+        # Only a Super Admin can create another
+        # Super Admin account.
+        # -------------------------------------------------
+
         if (
-            not current_user.is_super_admin
-            and form.role.data == "Super Admin"
+            form.role.data == "Super Admin"
+            and not current_user.is_super_admin
         ):
             raise ValueError(
                 "Only a Super Admin can create a Super Admin account."
             )
 
+        # -------------------------------------------------
         # Check username
+        # -------------------------------------------------
+
         if User.query.filter_by(
             username=form.username.data.strip()
         ).first():
@@ -37,7 +46,10 @@ class UserService:
                 "Username already exists."
             )
 
+        # -------------------------------------------------
         # Check email
+        # -------------------------------------------------
+
         if User.query.filter_by(
             email=form.email.data.strip().lower()
         ).first():
@@ -45,6 +57,10 @@ class UserService:
             raise ValueError(
                 "Email address already exists."
             )
+
+        # -------------------------------------------------
+        # Save profile photo
+        # -------------------------------------------------
 
         filename = None
 
@@ -55,31 +71,50 @@ class UserService:
                 USERS_FOLDER
             )
 
+        # -------------------------------------------------
+        # Create user
+        # -------------------------------------------------
+
         user = User(
+
             first_name=form.first_name.data.strip(),
+
             last_name=form.last_name.data.strip(),
+
             username=form.username.data.strip(),
+
             email=form.email.data.strip().lower(),
+
             phone=(
                 form.phone.data.strip()
                 if form.phone.data
                 else None
             ),
+
             photo=filename,
+
             role=form.role.data,
+
             is_active=form.is_active.data
         )
+
+        # -------------------------------------------------
+        # Set password
+        # -------------------------------------------------
 
         user.set_password(
             form.password.data
         )
+
+        # -------------------------------------------------
+        # Save
+        # -------------------------------------------------
 
         db.session.add(user)
 
         db.session.commit()
 
         return user
-
 
     # =====================================================
     # Update User
@@ -93,20 +128,6 @@ class UserService:
     ):
 
         # -------------------------------------------------
-        # Protect Super Admin
-        # -------------------------------------------------
-
-        if (
-            user.is_super_admin
-            and not current_user.is_super_admin
-        ):
-
-            raise ValueError(
-                "Only a Super Admin can modify a Super Admin account."
-            )
-
-
-        # -------------------------------------------------
         # Check username
         # -------------------------------------------------
 
@@ -119,7 +140,6 @@ class UserService:
             raise ValueError(
                 "Username already exists."
             )
-
 
         # -------------------------------------------------
         # Check email
@@ -135,9 +155,25 @@ class UserService:
                 "Email address already exists."
             )
 
+        # -------------------------------------------------
+        # Super Admin protection
+        # -------------------------------------------------
+
+        # Only a Super Admin can assign the
+        # Super Admin role.
+
+        if (
+            allow_role_change
+            and form.role.data == "Super Admin"
+            and not current_user.is_super_admin
+        ):
+
+            raise ValueError(
+                "Only a Super Admin can assign the Super Admin role."
+            )
 
         # -------------------------------------------------
-        # Basic information
+        # Update basic information
         # -------------------------------------------------
 
         user.first_name = (
@@ -162,47 +198,24 @@ class UserService:
             else None
         )
 
-
         # -------------------------------------------------
-        # Role
+        # Update role
         # -------------------------------------------------
 
         if allow_role_change:
 
-            if (
-                not current_user.is_super_admin
-                and form.role.data == "Super Admin"
-            ):
-
-                raise ValueError(
-                    "Only a Super Admin can assign the Super Admin role."
-                )
-
             user.role = form.role.data
 
+        # -------------------------------------------------
+        # Update active status
+        # -------------------------------------------------
+
+        user.is_active = (
+            form.is_active.data
+        )
 
         # -------------------------------------------------
-        # Active status
-        # -------------------------------------------------
-
-        if (
-            user.is_super_admin
-            and not current_user.is_super_admin
-        ):
-
-            # Administrator cannot deactivate
-            # a Super Admin.
-            user.is_active = True
-
-        else:
-
-            user.is_active = (
-                form.is_active.data
-            )
-
-
-        # -------------------------------------------------
-        # Photo
+        # Update profile photo
         # -------------------------------------------------
 
         if form.photo.data:
@@ -214,9 +227,8 @@ class UserService:
 
             user.photo = filename
 
-
         # -------------------------------------------------
-        # Password
+        # Update password
         # -------------------------------------------------
 
         if form.password.data:
@@ -225,11 +237,13 @@ class UserService:
                 form.password.data
             )
 
+        # -------------------------------------------------
+        # Save
+        # -------------------------------------------------
 
         db.session.commit()
 
         return user
-
 
     # =====================================================
     # Delete User
@@ -238,26 +252,26 @@ class UserService:
     @staticmethod
     def delete_user(user):
 
+        # -------------------------------------------------
+        # Import current_user locally
+        # -------------------------------------------------
+
+        from flask_login import current_user
+
+        # -------------------------------------------------
         # Prevent deleting yourself
+        # -------------------------------------------------
+
         if current_user.id == user.id:
 
             raise ValueError(
                 "You cannot delete your own account."
             )
 
+        # -------------------------------------------------
+        # Protect the last Super Admin
+        # -------------------------------------------------
 
-        # Only Super Admin can delete another Super Admin
-        if (
-            user.is_super_admin
-            and not current_user.is_super_admin
-        ):
-
-            raise ValueError(
-                "Only a Super Admin can delete a Super Admin account."
-            )
-
-
-        # Prevent deleting the last Super Admin
         if user.is_super_admin:
 
             total = User.query.filter_by(
@@ -270,11 +284,13 @@ class UserService:
                     "The last Super Admin cannot be deleted."
                 )
 
+        # -------------------------------------------------
+        # Delete
+        # -------------------------------------------------
 
         db.session.delete(user)
 
         db.session.commit()
-
 
     # =====================================================
     # Change Password
@@ -286,12 +302,13 @@ class UserService:
         password
     ):
 
-        user.set_password(password)
+        user.set_password(
+            password
+        )
 
         db.session.commit()
 
         return user
-
 
     # =====================================================
     # Activate User
@@ -304,6 +321,7 @@ class UserService:
 
         db.session.commit()
 
+        return user
 
     # =====================================================
     # Deactivate User
@@ -312,19 +330,10 @@ class UserService:
     @staticmethod
     def deactivate(user):
 
-        # Only Super Admin can deactivate
-        # another Super Admin.
-        if (
-            user.is_super_admin
-            and not current_user.is_super_admin
-        ):
+        # -------------------------------------------------
+        # Protect the last Super Admin
+        # -------------------------------------------------
 
-            raise ValueError(
-                "Only a Super Admin can deactivate a Super Admin account."
-            )
-
-
-        # Don't deactivate the last Super Admin
         if user.is_super_admin:
 
             total = User.query.filter_by(
@@ -337,8 +346,12 @@ class UserService:
                     "The last Super Admin cannot be deactivated."
                 )
 
+        # -------------------------------------------------
+        # Deactivate
+        # -------------------------------------------------
 
         user.is_active = False
 
         db.session.commit()
-        
+
+        return user
