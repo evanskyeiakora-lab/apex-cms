@@ -216,19 +216,15 @@
 
         <!-- MEMBERS -->
 
-        <li>
+        
 
-            <a href="{{ url_for('members.index') }}"
-               class="{% if request.endpoint and request.endpoint.startswith('members.') %}active{% endif %}">
 
-                <i class="fas fa-users"></i>
+        <!-- LEADERS -->
 
-                <span>Members</span>
-
-            </a>
-
-        </li>
-
+<a href="{{ url_for('leaders.index') }}"
+   class="{% if request.endpoint and request.endpoint.startswith('leaders.') %}active{% endif %}">
+    <span>Leaders</span>
+</a>
 
         <!-- ================================================== -->
         <!-- MEMBERSHIP APPLICATIONS -->
