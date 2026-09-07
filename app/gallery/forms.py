@@ -23,6 +23,10 @@ from app.utils.file_upload import allowed_file
 
 class GalleryForm(FlaskForm):
 
+    # ==========================================================
+    # TITLE
+    # ==========================================================
+
     title = StringField(
         "Title",
         validators=[
@@ -30,6 +34,10 @@ class GalleryForm(FlaskForm):
             Length(max=255)
         ]
     )
+
+    # ==========================================================
+    # DESCRIPTION
+    # ==========================================================
 
     description = TextAreaField(
         "Description",
@@ -39,9 +47,20 @@ class GalleryForm(FlaskForm):
         ]
     )
 
+    # ==========================================================
+    # IMAGE
+    # ==========================================================
+
     image = FileField(
-        "Gallery Image"
+        "Gallery Image",
+        validators=[
+            Optional()
+        ]
     )
+
+    # ==========================================================
+    # CATEGORY
+    # ==========================================================
 
     category = SelectField(
         "Category",
@@ -56,8 +75,14 @@ class GalleryForm(FlaskForm):
             ("Outreach", "Outreach"),
             ("Community", "Community")
         ],
-        validators=[DataRequired()]
+        validators=[
+            DataRequired()
+        ]
     )
+
+    # ==========================================================
+    # DISPLAY ORDER
+    # ==========================================================
 
     display_order = IntegerField(
         "Display Order",
@@ -70,41 +95,87 @@ class GalleryForm(FlaskForm):
         ]
     )
 
+    # ==========================================================
+    # FEATURED
+    # ==========================================================
+
     is_featured = BooleanField(
-        "Featured Image"
+        "Featured Image",
+        default=False
     )
 
-    # Keep this if your Gallery model still uses is_active
-    is_active = BooleanField(
-        "Active",
+    # ==========================================================
+    # PUBLISHED
+    # ==========================================================
+
+    is_published = BooleanField(
+        "Published",
         default=True
     )
 
-    # Uncomment this instead if you've switched to PublishMixin
-    #
-    # status = SelectField(
-    #     "Status",
-    #     choices=[
-    #         ("draft", "Draft"),
-    #         ("published", "Published"),
-    #         ("archived", "Archived")
-    #     ],
-    #     default="published"
-    # )
+    # ==========================================================
+    # SUBMIT
+    # ==========================================================
 
     submit = SubmitField(
         "Save Gallery"
     )
 
-    # -----------------------------
-    # Image Validation
-    # -----------------------------
+    # ==========================================================
+    # IMAGE VALIDATION
+    # ==========================================================
+
     def validate_image(self, field):
 
-        if field.data and field.data.filename:
+        # ------------------------------------------------------
+        # NO NEW IMAGE
+        # ------------------------------------------------------
+        #
+        # This is completely valid when editing.
+        #
+        # The existing image will remain unchanged.
+        # ------------------------------------------------------
 
-            if not allowed_file(field.data.filename):
+        if not field.data:
 
-                raise ValidationError(
-                    "Only JPG, JPEG, PNG and WEBP images are allowed."
-                )
+            return
+
+        # ------------------------------------------------------
+        # MAKE SURE WE HAVE A FILE OBJECT
+        # ------------------------------------------------------
+
+        if not hasattr(
+            field.data,
+            "filename"
+        ):
+
+            return
+
+        # ------------------------------------------------------
+        # GET FILENAME
+        # ------------------------------------------------------
+
+        filename = (
+            field.data.filename or ""
+        ).strip()
+
+        # ------------------------------------------------------
+        # EMPTY FILE INPUT
+        # ------------------------------------------------------
+
+        if not filename:
+
+            return
+
+        # ------------------------------------------------------
+        # VALIDATE EXTENSION
+        # ------------------------------------------------------
+
+        if not allowed_file(
+            filename
+        ):
+
+            raise ValidationError(
+                "Invalid image upload. "
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
+            )

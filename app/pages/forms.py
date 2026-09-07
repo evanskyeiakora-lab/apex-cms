@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 
 from wtforms import (
     StringField,
     TextAreaField,
     BooleanField,
-    FileField,
     SubmitField,
     SelectField
 )
@@ -15,12 +15,12 @@ from wtforms.validators import (
     Optional
 )
 
-from flask_wtf.file import (
-    FileAllowed
-)
-
 
 class PageForm(FlaskForm):
+
+    # ==========================================
+    # Page Title
+    # ==========================================
 
     title = StringField(
         "Page Title",
@@ -30,6 +30,11 @@ class PageForm(FlaskForm):
         ]
     )
 
+
+    # ==========================================
+    # Page Slug
+    # ==========================================
+
     slug = StringField(
         "Slug",
         validators=[
@@ -38,6 +43,11 @@ class PageForm(FlaskForm):
         ],
         description="Leave blank to generate automatically."
     )
+
+
+    # ==========================================
+    # Page Role
+    # ==========================================
 
     page_role = SelectField(
         "Page Role",
@@ -53,6 +63,11 @@ class PageForm(FlaskForm):
         default="normal"
     )
 
+
+    # ==========================================
+    # Content
+    # ==========================================
+
     content = TextAreaField(
         "Content",
         validators=[
@@ -60,16 +75,31 @@ class PageForm(FlaskForm):
         ]
     )
 
+
+    # ==========================================
+    # Featured Image
+    # ==========================================
+
     featured_image = FileField(
         "Featured Image",
         validators=[
             Optional(),
             FileAllowed(
-                ["jpg", "jpeg", "png", "webp"],
+                [
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "webp"
+                ],
                 "Images only."
             )
         ]
     )
+
+
+    # ==========================================
+    # SEO Meta Title
+    # ==========================================
 
     meta_title = StringField(
         "Meta Title",
@@ -79,6 +109,11 @@ class PageForm(FlaskForm):
         ]
     )
 
+
+    # ==========================================
+    # SEO Meta Description
+    # ==========================================
+
     meta_description = TextAreaField(
         "Meta Description",
         validators=[
@@ -87,11 +122,32 @@ class PageForm(FlaskForm):
         ]
     )
 
+
+    # ==========================================
+    # Published Status
+    # ==========================================
+
     is_published = BooleanField(
         "Publish Page",
         default=True
     )
 
+
+    # ==========================================
+    # Submit
+    # ==========================================
+
     submit = SubmitField(
         "Save Page"
+    )
+
+
+# ==========================================
+# Delete Page Form
+# ==========================================
+
+class DeletePageForm(FlaskForm):
+
+    submit = SubmitField(
+        "Delete Page"
     )

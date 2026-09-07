@@ -1,6 +1,5 @@
 from app.extensions import db
-from app.utils.mixins import TimestampMixin
-
+from app.models.mixins import TimestampMixin
 
 class Leader(TimestampMixin, db.Model):
     __tablename__ = "leaders"

@@ -6,22 +6,48 @@ from flask import (
     request
 )
 
-from flask_login import login_required
-
 from . import pages_bp
-from .forms import PageForm
+
+from .forms import (
+    PageForm,
+    DeletePageForm
+)
 
 from app.extensions import db
+
 from app.models import Page
-from app.utils.file_upload import save_image
-from app.utils.slug import generate_unique_slug
+
+from app.utils.file_upload import (
+    replace_image,
+    delete_image
+)
+
+from app.utils.slug import (
+    generate_unique_slug
+)
+
+from app.utils.permissions import (
+    roles_required
+)
+
+
+# ==========================================
+# Allowed Roles
+# ==========================================
+
+PAGE_ROLES = (
+    "Super Admin",
+    "Administrator",
+    "Editor"
+)
+
 
 # ==========================================
 # Pages List
 # ==========================================
 
 @pages_bp.route("/")
-@login_required
+@roles_required(*PAGE_ROLES)
 def index():
 
     page = request.args.get(
@@ -33,19 +59,41 @@ def index():
     search = request.args.get(
         "search",
         ""
-    )
+    ).strip()
+
+    # --------------------------------------
+    # Delete form
+    # --------------------------------------
+
+    delete_form = DeletePageForm()
+
+    # --------------------------------------
+    # Base query
+    # --------------------------------------
 
     query = Page.query
+
+    # --------------------------------------
+    # Search
+    # --------------------------------------
 
     if search:
 
         query = query.filter(
-            Page.title.ilike(f"%{search}%")
+            Page.title.ilike(
+                f"%{search}%"
+            )
         )
+
+    # --------------------------------------
+    # Pagination
+    # --------------------------------------
 
     pages = (
         query
-        .order_by(Page.created_at.desc())
+        .order_by(
+            Page.created_at.desc()
+        )
         .paginate(
             page=page,
             per_page=10,
@@ -53,10 +101,15 @@ def index():
         )
     )
 
+    # --------------------------------------
+    # Render
+    # --------------------------------------
+
     return render_template(
         "admin/pages/index.html",
         pages=pages,
-        search=search
+        search=search,
+        delete_form=delete_form
     )
 
 
@@ -64,33 +117,25 @@ def index():
 # Create Page
 # ==========================================
 
-@pages_bp.route("/create", methods=["GET", "POST"])
-@login_required
+@pages_bp.route(
+    "/create",
+    methods=["GET", "POST"]
+)
+@roles_required(*PAGE_ROLES)
 def create():
 
     form = PageForm()
 
+    # --------------------------------------
+    # Validate form
+    # --------------------------------------
+
     if form.validate_on_submit():
 
-        filename = None
+        # ----------------------------------
+        # Special page role protection
+        # ----------------------------------
 
-        if form.featured_image.data:
-            filename = save_image(
-                form.featured_image.data,
-                "pages"
-            )
-
-        # Auto-generate slug if left blank
-        slug = form.slug.data.strip()
-
-    if not slug:
-        slug = generate_unique_slug(
-        Page,
-        form.title.data,
-        page.id
-    )
-
-        # Ensure only one page can have a special role
         if form.page_role.data != "normal":
 
             existing = Page.query.filter_by(
@@ -100,7 +145,9 @@ def create():
             if existing:
 
                 flash(
-                    f"The role '{form.page_role.data}' is already assigned to '{existing.title}'.",
+                    f"The role '{form.page_role.data}' "
+                    f"is already assigned to "
+                    f"'{existing.title}'.",
                     "danger"
                 )
 
@@ -109,19 +156,77 @@ def create():
                     form=form
                 )
 
+        # ----------------------------------
+        # Featured image
+        # ----------------------------------
+
+        filename = None
+
+        if form.featured_image.data:
+
+            from app.utils.file_upload import (
+                save_image
+            )
+
+            filename = save_image(
+                form.featured_image.data,
+                "pages"
+            )
+
+        # ----------------------------------
+        # Slug
+        # ----------------------------------
+
+        slug = (
+            form.slug.data.strip()
+            if form.slug.data
+            else ""
+        )
+
+        if not slug:
+
+            slug = generate_unique_slug(
+                Page,
+                form.title.data,
+                None
+            )
+
+        # ----------------------------------
+        # Create page
+        # ----------------------------------
+
         page = Page(
+
             title=form.title.data,
+
             slug=slug,
+
             page_role=form.page_role.data,
+
             content=form.content.data,
+
             featured_image=filename,
+
             meta_title=form.meta_title.data,
+
             meta_description=form.meta_description.data,
+
             is_published=form.is_published.data
         )
 
-        db.session.add(page)
+        # ----------------------------------
+        # Save
+        # ----------------------------------
+
+        db.session.add(
+            page
+        )
+
         db.session.commit()
+
+        # ----------------------------------
+        # Success message
+        # ----------------------------------
 
         flash(
             "Page created successfully.",
@@ -132,10 +237,15 @@ def create():
             url_for("pages.index")
         )
 
+    # --------------------------------------
+    # Render create form
+    # --------------------------------------
+
     return render_template(
         "admin/pages/create.html",
         form=form
     )
+
 
 # ==========================================
 # Edit Page
@@ -145,37 +255,142 @@ def create():
     "/edit/<int:id>",
     methods=["GET", "POST"]
 )
-@login_required
+@roles_required(*PAGE_ROLES)
 def edit(id):
 
-    page = Page.query.get_or_404(id)
+    page = Page.query.get_or_404(
+        id
+    )
 
     form = PageForm(
         obj=page
     )
 
+    # --------------------------------------
+    # Validate form
+    # --------------------------------------
+
     if form.validate_on_submit():
 
-        page.title = form.title.data
-        page.slug = form.slug.data
-        page.content = form.content.data
-        page.meta_title = form.meta_title.data
-        page.meta_description = form.meta_description.data
+        # ----------------------------------
+        # Special page role protection
+        # ----------------------------------
 
-        page.is_home_about = form.is_home_about.data
-        page.is_published = form.is_published.data
+        if form.page_role.data != "normal":
 
-        if form.featured_image.data:
-
-            filename = save_image(
-                form.featured_image.data,
-                "pages"
+            existing = (
+                Page.query
+                .filter(
+                    Page.page_role == form.page_role.data,
+                    Page.id != page.id
+                )
+                .first()
             )
 
-            if filename:
-                page.featured_image = filename
+            if existing:
+
+                flash(
+                    f"The role '{form.page_role.data}' "
+                    f"is already assigned to "
+                    f"'{existing.title}'.",
+                    "danger"
+                )
+
+                return render_template(
+                    "admin/pages/edit.html",
+                    form=form,
+                    page=page
+                )
+
+        # ----------------------------------
+        # Basic information
+        # ----------------------------------
+
+        page.title = (
+            form.title.data
+        )
+
+        # ----------------------------------
+        # Slug
+        # ----------------------------------
+
+        submitted_slug = (
+            form.slug.data.strip()
+            if form.slug.data
+            else ""
+        )
+
+        if submitted_slug:
+
+            page.slug = generate_unique_slug(
+                Page,
+                submitted_slug,
+                page.id
+            )
+
+        else:
+
+            page.slug = generate_unique_slug(
+                Page,
+                form.title.data,
+                page.id
+            )
+
+        # ----------------------------------
+        # Page role
+        # ----------------------------------
+
+        page.page_role = (
+            form.page_role.data
+        )
+
+        # ----------------------------------
+        # Content
+        # ----------------------------------
+
+        page.content = (
+            form.content.data
+        )
+
+        # ----------------------------------
+        # SEO
+        # ----------------------------------
+
+        page.meta_title = (
+            form.meta_title.data
+        )
+
+        page.meta_description = (
+            form.meta_description.data
+        )
+
+        # ----------------------------------
+        # Published status
+        # ----------------------------------
+
+        page.is_published = (
+            form.is_published.data
+        )
+
+        # ----------------------------------
+        # Featured image
+        # ----------------------------------
+
+        page.featured_image = replace_image(
+            page.featured_image,
+            form.featured_image.data,
+            "pages"
+        )
+
+        # ----------------------------------
+        # Save changes
+        # ----------------------------------
 
         db.session.commit()
+
+        # ----------------------------------
+        # Success message
+        # ----------------------------------
 
         flash(
             "Page updated successfully.",
@@ -185,6 +400,10 @@ def edit(id):
         return redirect(
             url_for("pages.index")
         )
+
+    # --------------------------------------
+    # Render edit form
+    # --------------------------------------
 
     return render_template(
         "admin/pages/edit.html",
@@ -198,15 +417,61 @@ def edit(id):
 # ==========================================
 
 @pages_bp.route(
-    "/delete/<int:id>"
+    "/delete/<int:id>",
+    methods=["POST"]
 )
-@login_required
+@roles_required(*PAGE_ROLES)
 def delete(id):
 
-    page = Page.query.get_or_404(id)
+    # --------------------------------------
+    # Validate CSRF
+    # --------------------------------------
 
-    db.session.delete(page)
+    form = DeletePageForm()
+
+    if not form.validate_on_submit():
+
+        flash(
+            "Invalid delete request.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("pages.index")
+        )
+
+    # --------------------------------------
+    # Find page
+    # --------------------------------------
+
+    page = Page.query.get_or_404(
+        id
+    )
+
+    # --------------------------------------
+    # Delete featured image
+    # --------------------------------------
+
+    if page.featured_image:
+
+        delete_image(
+            page.featured_image,
+            "pages"
+        )
+
+    # --------------------------------------
+    # Delete database record
+    # --------------------------------------
+
+    db.session.delete(
+        page
+    )
+
     db.session.commit()
+
+    # --------------------------------------
+    # Success message
+    # --------------------------------------
 
     flash(
         "Page deleted successfully.",

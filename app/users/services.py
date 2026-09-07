@@ -22,9 +22,6 @@ class UserService:
         # -------------------------------------------------
         # Super Admin protection
         # -------------------------------------------------
-        # Only a Super Admin can create another
-        # Super Admin account.
-        # -------------------------------------------------
 
         if (
             form.role.data == "Super Admin"
@@ -38,8 +35,10 @@ class UserService:
         # Check username
         # -------------------------------------------------
 
+        username = form.username.data.strip()
+
         if User.query.filter_by(
-            username=form.username.data.strip()
+            username=username
         ).first():
 
             raise ValueError(
@@ -50,8 +49,10 @@ class UserService:
         # Check email
         # -------------------------------------------------
 
+        email = form.email.data.strip().lower()
+
         if User.query.filter_by(
-            email=form.email.data.strip().lower()
+            email=email
         ).first():
 
             raise ValueError(
@@ -76,25 +77,17 @@ class UserService:
         # -------------------------------------------------
 
         user = User(
-
             first_name=form.first_name.data.strip(),
-
             last_name=form.last_name.data.strip(),
-
-            username=form.username.data.strip(),
-
-            email=form.email.data.strip().lower(),
-
+            username=username,
+            email=email,
             phone=(
                 form.phone.data.strip()
                 if form.phone.data
                 else None
             ),
-
             photo=filename,
-
             role=form.role.data,
-
             is_active=form.is_active.data
         )
 
@@ -111,10 +104,10 @@ class UserService:
         # -------------------------------------------------
 
         db.session.add(user)
-
         db.session.commit()
 
         return user
+
 
     # =====================================================
     # Update User
@@ -131,8 +124,10 @@ class UserService:
         # Check username
         # -------------------------------------------------
 
+        username = form.username.data.strip()
+
         existing = User.query.filter_by(
-            username=form.username.data.strip()
+            username=username
         ).first()
 
         if existing and existing.id != user.id:
@@ -145,8 +140,10 @@ class UserService:
         # Check email
         # -------------------------------------------------
 
+        email = form.email.data.strip().lower()
+
         existing = User.query.filter_by(
-            email=form.email.data.strip().lower()
+            email=email
         ).first()
 
         if existing and existing.id != user.id:
@@ -156,21 +153,62 @@ class UserService:
             )
 
         # -------------------------------------------------
-        # Super Admin protection
+        # Super Admin role protection
         # -------------------------------------------------
 
-        # Only a Super Admin can assign the
-        # Super Admin role.
+        if allow_role_change:
 
-        if (
-            allow_role_change
-            and form.role.data == "Super Admin"
-            and not current_user.is_super_admin
-        ):
+            requested_role = form.role.data
 
-            raise ValueError(
-                "Only a Super Admin can assign the Super Admin role."
-            )
+            # ---------------------------------------------
+            # Non-Super-Admin cannot assign Super Admin
+            # ---------------------------------------------
+
+            if (
+                requested_role == "Super Admin"
+                and not current_user.is_super_admin
+            ):
+
+                raise ValueError(
+                    "Only a Super Admin can assign the Super Admin role."
+                )
+
+            # ---------------------------------------------
+            # Prevent removing the last Super Admin
+            # ---------------------------------------------
+
+            if (
+                user.is_super_admin
+                and requested_role != "Super Admin"
+            ):
+
+                total_super_admins = (
+                    User.query
+                    .filter_by(role="Super Admin")
+                    .count()
+                )
+
+                if total_super_admins <= 1:
+
+                    raise ValueError(
+                        "The last Super Admin cannot be demoted."
+                    )
+
+            # ---------------------------------------------
+            # Prevent Super Admin from changing their own
+            # Super Admin role
+            # ---------------------------------------------
+
+            if (
+                user.id == current_user.id
+                and user.is_super_admin
+                and requested_role != "Super Admin"
+            ):
+
+                raise ValueError(
+                    "You cannot remove the Super Admin role "
+                    "from your own account."
+                )
 
         # -------------------------------------------------
         # Update basic information
@@ -184,13 +222,9 @@ class UserService:
             form.last_name.data.strip()
         )
 
-        user.username = (
-            form.username.data.strip()
-        )
+        user.username = username
 
-        user.email = (
-            form.email.data.strip().lower()
-        )
+        user.email = email
 
         user.phone = (
             form.phone.data.strip()
@@ -207,12 +241,24 @@ class UserService:
             user.role = form.role.data
 
         # -------------------------------------------------
+        # Protect current Super Admin from self-deactivation
+        # -------------------------------------------------
+
+        if (
+            user.id == current_user.id
+            and user.is_super_admin
+            and not form.is_active.data
+        ):
+
+            raise ValueError(
+                "You cannot deactivate your own Super Admin account."
+            )
+
+        # -------------------------------------------------
         # Update active status
         # -------------------------------------------------
 
-        user.is_active = (
-            form.is_active.data
-        )
+        user.is_active = form.is_active.data
 
         # -------------------------------------------------
         # Update profile photo
@@ -225,7 +271,8 @@ class UserService:
                 USERS_FOLDER
             )
 
-            user.photo = filename
+            if filename:
+                user.photo = filename
 
         # -------------------------------------------------
         # Update password
@@ -245,18 +292,13 @@ class UserService:
 
         return user
 
+
     # =====================================================
     # Delete User
     # =====================================================
 
     @staticmethod
     def delete_user(user):
-
-        # -------------------------------------------------
-        # Import current_user locally
-        # -------------------------------------------------
-
-        from flask_login import current_user
 
         # -------------------------------------------------
         # Prevent deleting yourself
@@ -269,16 +311,18 @@ class UserService:
             )
 
         # -------------------------------------------------
-        # Protect the last Super Admin
+        # Protect Super Admin accounts
         # -------------------------------------------------
 
         if user.is_super_admin:
 
-            total = User.query.filter_by(
-                role="Super Admin"
-            ).count()
+            total_super_admins = (
+                User.query
+                .filter_by(role="Super Admin")
+                .count()
+            )
 
-            if total <= 1:
+            if total_super_admins <= 1:
 
                 raise ValueError(
                     "The last Super Admin cannot be deleted."
@@ -291,6 +335,7 @@ class UserService:
         db.session.delete(user)
 
         db.session.commit()
+
 
     # =====================================================
     # Change Password
@@ -310,6 +355,7 @@ class UserService:
 
         return user
 
+
     # =====================================================
     # Activate User
     # =====================================================
@@ -323,6 +369,7 @@ class UserService:
 
         return user
 
+
     # =====================================================
     # Deactivate User
     # =====================================================
@@ -331,16 +378,28 @@ class UserService:
     def deactivate(user):
 
         # -------------------------------------------------
+        # Prevent self-deactivation
+        # -------------------------------------------------
+
+        if current_user.id == user.id:
+
+            raise ValueError(
+                "You cannot deactivate your own account."
+            )
+
+        # -------------------------------------------------
         # Protect the last Super Admin
         # -------------------------------------------------
 
         if user.is_super_admin:
 
-            total = User.query.filter_by(
-                role="Super Admin"
-            ).count()
+            total_super_admins = (
+                User.query
+                .filter_by(role="Super Admin")
+                .count()
+            )
 
-            if total <= 1:
+            if total_super_admins <= 1:
 
                 raise ValueError(
                     "The last Super Admin cannot be deactivated."

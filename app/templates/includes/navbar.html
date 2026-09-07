@@ -1,110 +1,214 @@
-<!-- ==========================================
-     Navbar Start
-=========================================== -->
+<!-- =========================================================
+     PUBLIC NAVBAR
+========================================================= -->
+
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
 
     <div class="container">
 
-        <!-- Logo -->
-        <a class="navbar-brand d-flex align-items-center"
-           href="{{ url_for('main.home') }}">
 
-            {% if settings.logo %}
-                <img src="{{ url_for('static', filename='uploads/settings/' ~ settings.logo) }}"
-                     alt="{{ settings.site_name }}"
-                     height="55"
-                     class="me-2">
+        <!-- =================================================
+             LOGO / BRAND
+        ================================================== -->
+
+        <a
+            class="navbar-brand d-flex align-items-center"
+            href="{{ url_for('main.home') }}"
+        >
+
+            {% if settings and settings.logo %}
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='uploads/settings/' ~ settings.logo
+                    ) }}"
+                    alt="{{ settings.site_name or 'Apex Citizens of Ghana' }}"
+                    height="55"
+                    class="me-2"
+                >
+
             {% else %}
-                <img src="{{ url_for('static', filename='images/logo.png') }}"
-                     alt="Logo"
-                     height="55"
-                     class="me-2">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='images/logo.png'
+                    ) }}"
+                    alt="Apex Citizens of Ghana"
+                    height="55"
+                    class="me-2"
+                >
+
             {% endif %}
+
 
             <div class="d-flex flex-column">
 
                 <span class="fw-bold text-success">
-                    {{ settings.site_name if settings else "Apex Citizens of Ghana" }}
+
+                    {{ settings.site_name
+                        if settings
+                        else "Apex Citizens of Ghana"
+                    }}
+
                 </span>
 
-                {% if settings.tagline %}
-                <small class="text-muted">
-                    {{ settings.tagline }}
-                </small>
+
+                {% if settings and settings.tagline %}
+
+                    <small class="text-muted">
+
+                        {{ settings.tagline }}
+
+                    </small>
+
                 {% endif %}
 
             </div>
 
         </a>
 
-        <!-- Mobile Toggle -->
 
-        <button class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu">
+        <!-- =================================================
+             MOBILE MENU BUTTON
+        ================================================== -->
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarMenu"
+            aria-controls="navbarMenu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
 
             <span class="navbar-toggler-icon"></span>
 
         </button>
 
-        <!-- Menu -->
 
-        <div class="collapse navbar-collapse" id="navbarMenu">
+        <!-- =================================================
+             NAVIGATION
+        ================================================== -->
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarMenu"
+        >
 
             <ul class="navbar-nav ms-auto align-items-lg-center">
 
+
+                <!-- HOME -->
+
                 <li class="nav-item">
-                    <a class="nav-link {% if request.endpoint=='main.home' %}active{% endif %}"
-                       href="{{ url_for('main.home') }}">
+
+                    <a
+                        class="nav-link
+                        {% if request.endpoint == 'main.home' %}active{% endif %}"
+                        href="{{ url_for('main.home') }}"
+                    >
+
                         Home
+
                     </a>
+
                 </li>
 
+
+                <!-- ABOUT -->
+
                 <li class="nav-item">
-                    <a class="nav-link"
-                       href="{{ url_for('main.page', slug='about') }}">
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('main.home') }}#about"
+                    >
+
                         About
+
                     </a>
+
                 </li>
 
-                <!-- Hide until the route exists -->
-                {#
+
+                <!-- NEWS -->
+
                 <li class="nav-item">
-                    <a class="nav-link"
-                       href="{{ url_for('main.news') }}">
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('main.home') }}#news"
+                    >
+
                         News
+
                     </a>
+
                 </li>
 
+
+                <!-- EVENTS -->
+
                 <li class="nav-item">
-                    <a class="nav-link {% if request.endpoint=='main.events' %}active{% endif %}"
-                       href="{{ url_for('main.events') }}">
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('main.home') }}#events"
+                    >
+
                         Events
+
                     </a>
+
                 </li>
 
+
+                <!-- GALLERY -->
+
                 <li class="nav-item">
-                    <a class="nav-link {% if request.endpoint=='main.gallery' %}active{% endif %}"
-                       href="{{ url_for('main.gallery') }}">
+
+                    <a
+                        class="nav-link"
+                        href="{{ url_for('main.home') }}#gallery"
+                    >
+
                         Gallery
+
                     </a>
+
                 </li>
 
-                <!-- Hide until the route exists -->
-                {#
+
+                <!-- CONTACT -->
+
                 <li class="nav-item">
-                    <a class="nav-link"
-                       href="{{ url_for('main.contact') }}">
+
+                    <a
+                        class="nav-link
+                        {% if request.endpoint == 'contact.contact' %}active{% endif %}"
+                        href="{{ url_for('contact.contact') }}"
+                    >
+
                         Contact
+
                     </a>
+
                 </li>
-                #}
+
+
+                <!-- JOIN US -->
 
                 <li class="nav-item ms-lg-3">
 
-                    <a href="{{ url_for('main.page', slug='about') }}"
-                       class="btn btn-primary px-4">
+                    <a
+                        href="{{ url_for('main.home') }}#join-us"
+                        class="nav-cta"
+                    >
+
+                        <i class="fas fa-user-plus me-1"></i>
 
                         Join Us
 
@@ -119,6 +223,120 @@
     </div>
 
 </nav>
-<!-- ==========================================
-     Navbar End
-=========================================== -->
+
+
+<!-- =========================================================
+     NAVBAR CSS
+========================================================= -->
+
+<style>
+
+.navbar {
+    min-height: 78px;
+    z-index: 1030;
+}
+
+
+.navbar-brand {
+    text-decoration: none;
+}
+
+
+.navbar-brand img {
+    width: auto;
+    object-fit: contain;
+}
+
+
+.navbar-brand span {
+    font-size: 1.15rem;
+}
+
+
+.navbar-nav {
+    gap: 6px;
+}
+
+
+.nav-link {
+    color: #374151 !important;
+
+    font-weight: 600;
+
+    padding: 10px 14px !important;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+
+.nav-link:hover {
+    color: #16864f !important;
+}
+
+
+.nav-link.active {
+    color: #16864f !important;
+}
+
+
+.nav-cta {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 10px 18px;
+
+    background: #16864f;
+
+    color: #ffffff !important;
+
+    text-decoration: none;
+
+    border-radius: 6px;
+
+    font-weight: 600;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.nav-cta:hover {
+    background: #106b3e;
+
+    color: #ffffff !important;
+
+    transform: translateY(-1px);
+}
+
+
+@media (max-width: 991px) {
+
+    .navbar-nav {
+        padding-top: 15px;
+
+        padding-bottom: 15px;
+
+        gap: 2px;
+    }
+
+
+    .nav-link {
+        padding: 10px 5px !important;
+    }
+
+
+    .nav-cta {
+        display: inline-flex;
+
+        margin-top: 8px;
+    }
+
+}
+
+</style>

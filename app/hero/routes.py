@@ -2,7 +2,9 @@ from flask import (
     render_template,
     redirect,
     url_for,
-    request
+    request,
+    current_app,
+    flash
 )
 
 from flask_login import login_required
@@ -23,13 +25,27 @@ from app.utils import (
 
 from app.utils.constants import HERO_FOLDER
 
+from app.utils.permissions import roles_required
 
-# ======================================
-# Hero List
-# ======================================
+
+# ==========================================================
+# ALLOWED ROLES
+# ==========================================================
+
+HERO_ROLES = (
+    "Super Admin",
+    "Administrator",
+    "Editor"
+)
+
+
+# ==========================================================
+# HERO SLIDER LIST
+# ==========================================================
 
 @hero_bp.route("/")
 @login_required
+@roles_required(*HERO_ROLES)
 def index():
 
     page = request.args.get(
@@ -41,7 +57,8 @@ def index():
     slides = (
         HeroSlide.query
         .order_by(
-            HeroSlide.display_order.asc()
+            HeroSlide.display_order.asc(),
+            HeroSlide.created_at.desc()
         )
         .paginate(
             page=page,
@@ -56,41 +73,152 @@ def index():
     )
 
 
-# ======================================
-# Create Slide
-# ======================================
+# ==========================================================
+# CREATE HERO SLIDE
+# ==========================================================
 
-@hero_bp.route("/create", methods=["GET", "POST"])
+@hero_bp.route(
+    "/create",
+    methods=["GET", "POST"]
+)
 @login_required
+@roles_required(*HERO_ROLES)
 def create():
 
     form = HeroForm()
 
+    # ------------------------------------------------------
+    # PROCESS FORM
+    # ------------------------------------------------------
+
     if form.validate_on_submit():
 
-        slide = HeroSlide(
-            title=form.title.data,
-            subtitle=form.subtitle.data,
-            button_text=form.button_text.data,
-            button_url=form.button_url.data,
-            display_order=form.display_order.data,
-            is_active=form.is_active.data
-        )
+        image_file = form.image.data
 
-        slide.image = replace_image(
-            None,
-            form.image.data,
-            HERO_FOLDER
-        )
+        # --------------------------------------------------
+        # IMAGE IS REQUIRED WHEN CREATING
+        # --------------------------------------------------
 
-        save(slide)
+        if not image_file or not getattr(
+            image_file,
+            "filename",
+            ""
+        ):
 
-        flash_success(
-            "Hero slide created successfully."
-        )
+            form.image.errors.append(
+                "Please upload a hero image."
+            )
 
-        return redirect(
-            url_for("hero.index")
+            return render_template(
+                "admin/hero/create.html",
+                form=form
+            )
+
+        try:
+
+            # ----------------------------------------------
+            # CREATE SLIDE
+            # ----------------------------------------------
+
+            slide = HeroSlide(
+                title=form.title.data.strip(),
+                subtitle=form.subtitle.data,
+                button_text=form.button_text.data,
+                button_url=form.button_url.data,
+                display_order=form.display_order.data or 1,
+                is_active=form.is_active.data
+            )
+
+            # ----------------------------------------------
+            # SAVE IMAGE
+            # ----------------------------------------------
+
+            slide.image = replace_image(
+                None,
+                image_file,
+                HERO_FOLDER
+            )
+
+            # ----------------------------------------------
+            # VERIFY IMAGE
+            # ----------------------------------------------
+
+            if not slide.image:
+
+                form.image.errors.append(
+                    "The hero image could not be saved."
+                )
+
+                return render_template(
+                    "admin/hero/create.html",
+                    form=form
+                )
+
+            # ----------------------------------------------
+            # SAVE DATABASE RECORD
+            # ----------------------------------------------
+
+            save(slide)
+
+            # ----------------------------------------------
+            # SUCCESS
+            # ----------------------------------------------
+
+            flash_success(
+                "Hero slide created successfully."
+            )
+
+            return redirect(
+                url_for("hero.index")
+            )
+
+        except Exception as error:
+
+            from app.extensions import db
+
+            db.session.rollback()
+
+            current_app.logger.exception(
+                "Hero slide creation error: %s",
+                error
+            )
+
+            # ----------------------------------------------
+            # CLEAN UP IMAGE IF DATABASE SAVE FAILED
+            # ----------------------------------------------
+
+            try:
+
+                if (
+                    "slide" in locals()
+                    and slide.image
+                ):
+
+                    delete_image(
+                        slide.image,
+                        HERO_FOLDER
+                    )
+
+            except Exception as image_error:
+
+                current_app.logger.exception(
+                    "Hero image cleanup error: %s",
+                    image_error
+                )
+
+            form.image.errors.append(
+                "An error occurred while creating the hero slide."
+            )
+
+    # ------------------------------------------------------
+    # LOG VALIDATION ERRORS
+    # ------------------------------------------------------
+
+    if request.method == "POST" and form.errors:
+
+        current_app.logger.warning(
+            "Hero create validation errors: %s",
+            form.errors
         )
 
     return render_template(
@@ -99,41 +227,141 @@ def create():
     )
 
 
-# ======================================
-# Edit Slide
-# ======================================
+# ==========================================================
+# EDIT HERO SLIDE
+# ==========================================================
 
-@hero_bp.route("/edit/<int:id>", methods=["GET", "POST"])
+@hero_bp.route(
+    "/edit/<int:id>",
+    methods=["GET", "POST"]
+)
 @login_required
+@roles_required(*HERO_ROLES)
 def edit(id):
 
-    slide = HeroSlide.query.get_or_404(id)
+    slide = HeroSlide.query.get_or_404(
+        id
+    )
 
-    form = HeroForm(obj=slide)
+    form = HeroForm(
+        obj=slide
+    )
+
+    # ------------------------------------------------------
+    # PROCESS FORM
+    # ------------------------------------------------------
 
     if form.validate_on_submit():
 
-        slide.title = form.title.data
-        slide.subtitle = form.subtitle.data
-        slide.button_text = form.button_text.data
-        slide.button_url = form.button_url.data
-        slide.display_order = form.display_order.data
-        slide.is_active = form.is_active.data
+        old_image = slide.image
 
-        slide.image = replace_image(
-            slide.image,
-            form.image.data,
-            HERO_FOLDER
-        )
+        try:
 
-        commit()
+            # ----------------------------------------------
+            # BASIC INFORMATION
+            # ----------------------------------------------
 
-        flash_success(
-            "Hero slide updated successfully."
-        )
+            slide.title = (
+                form.title.data.strip()
+            )
 
-        return redirect(
-            url_for("hero.index")
+            slide.subtitle = (
+                form.subtitle.data
+            )
+
+            slide.button_text = (
+                form.button_text.data
+            )
+
+            slide.button_url = (
+                form.button_url.data
+            )
+
+            slide.display_order = (
+                form.display_order.data or 1
+            )
+
+            slide.is_active = (
+                form.is_active.data
+            )
+
+            # ----------------------------------------------
+            # CHECK FOR NEW IMAGE
+            # ----------------------------------------------
+
+            image_file = form.image.data
+
+            if (
+                image_file
+                and getattr(
+                    image_file,
+                    "filename",
+                    ""
+                )
+            ):
+
+                new_image = replace_image(
+                    old_image,
+                    image_file,
+                    HERO_FOLDER
+                )
+
+                if not new_image:
+
+                    raise RuntimeError(
+                        "The new hero image could not be saved."
+                    )
+
+                slide.image = new_image
+
+            # ----------------------------------------------
+            # SAVE CHANGES
+            # ----------------------------------------------
+
+            commit()
+
+            # ----------------------------------------------
+            # SUCCESS
+            # ----------------------------------------------
+
+            flash_success(
+                "Hero slide updated successfully."
+            )
+
+            return redirect(
+                url_for("hero.index")
+            )
+
+        except Exception as error:
+
+            from app.extensions import db
+
+            db.session.rollback()
+
+            current_app.logger.exception(
+                "Hero slide update error for ID %s: %s",
+                id,
+                error
+            )
+
+            # Restore original image reference
+            slide.image = old_image
+
+            flash(
+                "An error occurred while updating the hero slide.",
+                "danger"
+            )
+
+    # ------------------------------------------------------
+    # LOG VALIDATION ERRORS
+    # ------------------------------------------------------
+
+    if request.method == "POST" and form.errors:
+
+        current_app.logger.warning(
+            "Hero edit validation errors for ID %s: %s",
+            id,
+            form.errors
         )
 
     return render_template(
@@ -143,26 +371,67 @@ def edit(id):
     )
 
 
-# ======================================
-# Delete Slide
-# ======================================
+# ==========================================================
+# DELETE HERO SLIDE
+# ==========================================================
 
-@hero_bp.route("/delete/<int:id>")
+@hero_bp.route(
+    "/delete/<int:id>",
+    methods=["POST"]
+)
 @login_required
+@roles_required(*HERO_ROLES)
 def delete_slide(id):
 
-    slide = HeroSlide.query.get_or_404(id)
-
-    delete_image(
-        slide.image,
-        HERO_FOLDER
+    slide = HeroSlide.query.get_or_404(
+        id
     )
 
-    delete(slide)
+    image = slide.image
 
-    flash_success(
-        "Hero slide deleted successfully."
-    )
+    try:
+
+        # --------------------------------------------------
+        # DELETE DATABASE RECORD
+        # --------------------------------------------------
+
+        delete(slide)
+
+        # --------------------------------------------------
+        # DELETE IMAGE FROM STORAGE
+        # --------------------------------------------------
+
+        if image:
+
+            delete_image(
+                image,
+                HERO_FOLDER
+            )
+
+        # --------------------------------------------------
+        # SUCCESS
+        # --------------------------------------------------
+
+        flash_success(
+            "Hero slide deleted successfully."
+        )
+
+    except Exception as error:
+
+        from app.extensions import db
+
+        db.session.rollback()
+
+        current_app.logger.exception(
+            "Hero slide deletion error for ID %s: %s",
+            id,
+            error
+        )
+
+        flash(
+            "An error occurred while deleting the hero slide.",
+            "danger"
+        )
 
     return redirect(
         url_for("hero.index")

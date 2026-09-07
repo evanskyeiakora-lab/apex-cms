@@ -1,5 +1,9 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField
+from flask_wtf.file import (
+    FileField,
+    FileAllowed
+)
+
 from wtforms import (
     StringField,
     TextAreaField,
@@ -7,43 +11,192 @@ from wtforms import (
     BooleanField,
     SubmitField
 )
-from wtforms.validators import DataRequired, Optional
 
+from wtforms.validators import (
+    DataRequired,
+    Optional,
+    Length,
+    Email,
+    NumberRange,
+    URL
+)
+
+
+# ==========================================
+# Member Form
+# ==========================================
 
 class MemberForm(FlaskForm):
 
+    # --------------------------------------
+    # Full Name
+    # --------------------------------------
+
     full_name = StringField(
         "Full Name",
-        validators=[DataRequired()]
+        validators=[
+            DataRequired(),
+            Length(max=150)
+        ]
     )
+
+
+    # --------------------------------------
+    # Position
+    # --------------------------------------
 
     position = StringField(
         "Position",
-        validators=[DataRequired()]
+        validators=[
+            DataRequired(),
+            Length(max=100)
+        ]
     )
 
-    biography = TextAreaField("Biography")
 
-    photo = FileField("Photo")
+    # --------------------------------------
+    # Biography
+    # --------------------------------------
 
-    email = StringField("Email")
+    biography = TextAreaField(
+        "Biography",
+        validators=[
+            Optional()
+        ]
+    )
 
-    phone = StringField("Phone")
 
-    facebook = StringField("Facebook")
+    # --------------------------------------
+    # Photo
+    # --------------------------------------
 
-    linkedin = StringField("LinkedIn")
+    photo = FileField(
+        "Photo",
+        validators=[
+            Optional(),
+            FileAllowed(
+                [
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "webp"
+                ],
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
+            )
+        ]
+    )
 
-    twitter = StringField("Twitter / X")
+
+    # --------------------------------------
+    # Email
+    # --------------------------------------
+
+    email = StringField(
+        "Email",
+        validators=[
+            Optional(),
+            Length(max=120),
+            Email(
+                message="Please enter a valid email address."
+            )
+        ]
+    )
+
+
+    # --------------------------------------
+    # Phone
+    # --------------------------------------
+
+    phone = StringField(
+        "Phone",
+        validators=[
+            Optional(),
+            Length(max=30)
+        ]
+    )
+
+
+    # --------------------------------------
+    # Facebook
+    # --------------------------------------
+
+    facebook = StringField(
+        "Facebook",
+        validators=[
+            Optional(),
+            Length(max=255)
+        ]
+    )
+
+
+    # --------------------------------------
+    # LinkedIn
+    # --------------------------------------
+
+    linkedin = StringField(
+        "LinkedIn",
+        validators=[
+            Optional(),
+            Length(max=255)
+        ]
+    )
+
+
+    # --------------------------------------
+    # Twitter / X
+    # --------------------------------------
+
+    twitter = StringField(
+        "Twitter / X",
+        validators=[
+            Optional(),
+            Length(max=255)
+        ]
+    )
+
+
+    # --------------------------------------
+    # Display Order
+    # --------------------------------------
 
     display_order = IntegerField(
         "Display Order",
-        default=1
+        default=1,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                message="Display order cannot be negative."
+            )
+        ]
     )
+
+
+    # --------------------------------------
+    # Active Status
+    # --------------------------------------
 
     is_active = BooleanField(
         "Active",
         default=True
     )
 
-    submit = SubmitField("Save")
+
+    # --------------------------------------
+    # Submit
+    # --------------------------------------
+
+    submit = SubmitField(
+        "Save Member"
+    )
+
+
+# ==========================================
+# Delete Member Form
+# ==========================================
+
+class DeleteMemberForm(FlaskForm):
+
+    submit = SubmitField(
+        "Delete Member"
+    )

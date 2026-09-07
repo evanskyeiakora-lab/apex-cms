@@ -4,7 +4,7 @@ from flask_wtf.file import FileField, FileAllowed
 from wtforms import (
     StringField,
     TextAreaField,
-    SelectField,
+    BooleanField,
     SubmitField
 )
 
@@ -16,6 +16,10 @@ from wtforms.validators import (
 
 class NewsForm(FlaskForm):
 
+    # ==========================================================
+    # TITLE
+    # ==========================================================
+
     title = StringField(
         "News Title",
         validators=[
@@ -24,6 +28,10 @@ class NewsForm(FlaskForm):
         ]
     )
 
+    # ==========================================================
+    # CONTENT
+    # ==========================================================
+
     content = TextAreaField(
         "Content",
         validators=[
@@ -31,23 +39,33 @@ class NewsForm(FlaskForm):
         ]
     )
 
+    # ==========================================================
+    # FEATURED IMAGE
+    # ==========================================================
+
     featured_image = FileField(
         "Featured Image",
         validators=[
             FileAllowed(
                 ["jpg", "jpeg", "png", "webp"],
-                "Only JPG, PNG and WEBP images are allowed."
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
             )
         ]
     )
 
-    status = SelectField(
-        "Publication Status",
-        choices=[
-            ("draft", "Draft"),
-            ("published", "Published")
-        ],
-        default="draft"
+    # ==========================================================
+    # PUBLICATION STATUS
+    # ==========================================================
+
+    is_published = BooleanField(
+        "Published",
+        default=False
     )
 
-    submit = SubmitField("Save News")
+    # ==========================================================
+    # SUBMIT
+    # ==========================================================
+
+    submit = SubmitField(
+        "Save News"
+    )

@@ -6,23 +6,33 @@ from werkzeug.security import (
     check_password_hash
 )
 
-from app.extensions import db
+from app.extensions import (
+    db,
+    login_manager
+)
 
 
-class User(UserMixin, db.Model):
+class User(
+    UserMixin,
+    db.Model
+):
+
     __tablename__ = "users"
+
+
+    # ==========================================================
+    # PRIMARY KEY
+    # ==========================================================
 
     id = db.Column(
         db.Integer,
         primary_key=True
     )
 
-    username = db.Column(
-        db.String(100),
-        unique=True,
-        nullable=False,
-        index=True
-    )
+
+    # ==========================================================
+    # PERSONAL INFORMATION
+    # ==========================================================
 
     first_name = db.Column(
         db.String(100),
@@ -34,76 +44,167 @@ class User(UserMixin, db.Model):
         nullable=False
     )
 
+    username = db.Column(
+        db.String(100),
+        nullable=False,
+        unique=True,
+        index=True
+    )
+
     email = db.Column(
         db.String(120),
-        unique=True,
         nullable=False,
+        unique=True,
         index=True
     )
 
     phone = db.Column(
-        db.String(30)
+        db.String(30),
+        nullable=True
     )
 
     photo = db.Column(
-        db.String(255)
+        db.String(255),
+        nullable=True
     )
 
-    role = db.Column(
-        db.String(30),
-        nullable=False,
-        default="Administrator",
-        index=True
-    )
+
+    # ==========================================================
+    # AUTHENTICATION
+    # ==========================================================
 
     password_hash = db.Column(
         db.String(255),
         nullable=False
     )
 
+
+    # ==========================================================
+    # ROLE AND STATUS
+    # ==========================================================
+
+    role = db.Column(
+        db.String(30),
+        nullable=False,
+        default="Author",
+        index=True
+    )
+
     is_active = db.Column(
         db.Boolean,
+        nullable=False,
         default=True
     )
 
-    last_login = db.Column(
-        db.DateTime
-    )
+
+    # ==========================================================
+    # TIMESTAMPS
+    # ==========================================================
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow
+        default=datetime.utcnow,
+        nullable=False
     )
 
     updated_at = db.Column(
         db.DateTime,
         default=datetime.utcnow,
-        onupdate=datetime.utcnow
+        onupdate=datetime.utcnow,
+        nullable=True
     )
 
+    last_login = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
+
+    # ==========================================================
+    # PASSWORD METHODS
+    # ==========================================================
+
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+
+        self.password_hash = generate_password_hash(
+            password
+        )
+
 
     def check_password(self, password):
+
         return check_password_hash(
             self.password_hash,
             password
         )
 
+
+    # ==========================================================
+    # USER DISPLAY NAME
+    # ==========================================================
+
     @property
     def full_name(self):
-        return f"{self.first_name} {self.last_name}"
+
+        return (
+            f"{self.first_name} "
+            f"{self.last_name}"
+        ).strip()
+
+
+    # ==========================================================
+    # ROLE CHECKS
+    # ==========================================================
 
     @property
     def is_super_admin(self):
+
         return self.role == "Super Admin"
+
 
     @property
     def is_admin(self):
+
         return self.role in [
             "Super Admin",
             "Administrator"
         ]
 
+
+    @property
+    def is_editor(self):
+
+        return self.role == "Editor"
+
+
+    # ==========================================================
+    # REPRESENTATION
+    # ==========================================================
+
     def __repr__(self):
-        return f"<User {self.username}>"
+
+        return (
+            f"<User {self.username}>"
+        )
+
+
+# ==========================================================
+# FLASK-LOGIN USER LOADER
+# ==========================================================
+
+@login_manager.user_loader
+def load_user(user_id):
+
+    try:
+
+        return db.session.get(
+            User,
+            int(user_id)
+        )
+
+    except (
+        TypeError,
+        ValueError
+    ):
+
+        return None

@@ -56,7 +56,6 @@ def restrict_super_admin_role(form):
 # ==========================================================
 
 @users_bp.route("/")
-@login_required
 @admin_required
 def index():
 
@@ -120,7 +119,7 @@ def index():
     "/create",
     methods=["GET", "POST"]
 )
-@login_required
+
 @admin_required
 def create():
 
@@ -192,7 +191,6 @@ def create():
     "/<int:id>/edit",
     methods=["GET", "POST"]
 )
-@login_required
 @admin_required
 def edit(id):
 
@@ -296,7 +294,6 @@ def edit(id):
     "/<int:id>/delete",
     methods=["POST"]
 )
-@login_required
 @admin_required
 def delete(id):
 
@@ -469,7 +466,7 @@ def change_password():
 @users_bp.route(
     "/<int:id>"
 )
-@login_required
+
 @admin_required
 def detail(id):
 

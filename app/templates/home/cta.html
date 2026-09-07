@@ -10,11 +10,16 @@
 
             <div class="col-lg-9 text-center text-white" data-aos="zoom-in">
 
+                <!-- Badge -->
+
                 <span class="badge bg-warning text-dark px-3 py-2 mb-3">
 
                     Join Our Movement
 
                 </span>
+
+
+                <!-- Heading -->
 
                 <h2 class="display-4 fw-bold mb-4">
 
@@ -22,6 +27,9 @@
                     A Better Ghana
 
                 </h2>
+
+
+                <!-- Description -->
 
                 <p class="lead mb-5">
 
@@ -31,21 +39,39 @@
 
                 </p>
 
+
+                <!-- Buttons -->
+
                 <div class="d-flex justify-content-center flex-wrap gap-3">
 
-                    <a href="{{ url_for('main.page', slug='about') }}"
-                       class="btn btn-warning btn-lg px-5">
+
+                    <!-- JOIN US -->
+
+                    <a
+                        href="/join-us"
+                        class="btn btn-warning btn-lg px-5"
+                    >
+
+                        <i class="fas fa-user-plus me-2"></i>
 
                         Join Us
 
                     </a>
 
-                    <a href="{{ url_for('main.events') }}"
-                       class="btn btn-outline-light btn-lg px-5">
+
+                    <!-- UPCOMING EVENTS -->
+
+                    <a
+                        href="/events"
+                        class="btn btn-outline-light btn-lg px-5"
+                    >
+
+                        <i class="fas fa-calendar-alt me-2"></i>
 
                         Upcoming Events
 
                     </a>
+
 
                 </div>
 

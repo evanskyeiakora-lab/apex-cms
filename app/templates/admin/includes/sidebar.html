@@ -8,29 +8,30 @@
              class="brand-logo">
 
         <div class="brand-text">
-
             <h4>Apex CMS</h4>
-
             <small>Administration</small>
-
         </div>
 
     </a>
 
 </div>
 
+
 <nav class="sidebar-nav">
 
     <ul>
 
-        <!-- ===================== -->
-        <!-- Dashboard -->
-        <!-- ===================== -->
+        <!-- ================================================== -->
+        <!-- MAIN -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator"
+        ] %}
 
         <li class="nav-title">
-
             MAIN
-
         </li>
 
         <li>
@@ -46,15 +47,36 @@
 
         </li>
 
-        <!-- ===================== -->
-        <!-- Content -->
-        <!-- ===================== -->
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- CONTENT -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator",
+            "Editor",
+            "Author"
+        ] %}
 
         <li class="nav-title">
-
             CONTENT
-
         </li>
+
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- HERO SLIDER -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator",
+            "Editor"
+        ] %}
 
         <li>
 
@@ -69,6 +91,19 @@
 
         </li>
 
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- PAGES -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator",
+            "Editor"
+        ] %}
+
         <li>
 
             <a href="{{ url_for('pages.index') }}"
@@ -81,6 +116,20 @@
             </a>
 
         </li>
+
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- NEWS -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator",
+            "Editor",
+            "Author"
+        ] %}
 
         <li>
 
@@ -95,6 +144,19 @@
 
         </li>
 
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- EVENTS -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator",
+            "Editor"
+        ] %}
+
         <li>
 
             <a href="{{ url_for('events.index') }}"
@@ -107,6 +169,19 @@
             </a>
 
         </li>
+
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- GALLERY -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator",
+            "Editor"
+        ] %}
 
         <li>
 
@@ -121,15 +196,25 @@
 
         </li>
 
-        <!-- ===================== -->
-        <!-- People -->
-        <!-- ===================== -->
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- PEOPLE -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator",
+            "Editor"
+        ] %}
 
         <li class="nav-title">
-
             PEOPLE
-
         </li>
+
+
+        <!-- MEMBERS -->
 
         <li>
 
@@ -144,15 +229,63 @@
 
         </li>
 
-        <!-- ===================== -->
-        <!-- Communication -->
-        <!-- ===================== -->
 
-        <li class="nav-title">
+        <!-- ================================================== -->
+        <!-- MEMBERSHIP APPLICATIONS -->
+        <!-- ================================================== -->
 
-            COMMUNICATION
+        <li>
+
+            <a
+                href="{{ url_for('admin.membership_applications') }}"
+                class="{% if request.endpoint and request.endpoint.startswith('admin.membership_application') %}active{% endif %}"
+            >
+
+                <i class="fas fa-user-plus"></i>
+
+                <span>Membership Applications</span>
+
+
+                {% if pending_applications_count > 0 %}
+
+                    <span
+                        class="badge bg-danger ms-auto"
+                        style="
+                            font-size: 0.7rem;
+                            min-width: 22px;
+                        "
+                    >
+
+                        {{ pending_applications_count }}
+
+                    </span>
+
+                {% endif %}
+
+            </a>
 
         </li>
+
+
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- COMMUNICATION -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator",
+            "Moderator"
+        ] %}
+
+        <li class="nav-title">
+            COMMUNICATION
+        </li>
+
+
+        <!-- MESSAGES -->
 
         <li>
 
@@ -167,17 +300,24 @@
 
         </li>
 
-        <!-- ===================== -->
-        <!-- System -->
-        <!-- ===================== -->
+        {% endif %}
+
+
+        <!-- ================================================== -->
+        <!-- SYSTEM -->
+        <!-- ================================================== -->
+
+        {% if current_user.role in [
+            "Super Admin",
+            "Administrator"
+        ] %}
 
         <li class="nav-title">
-
             SYSTEM
-
         </li>
 
-        {% if current_user.is_admin %}
+
+        <!-- USERS -->
 
         <li>
 
@@ -194,6 +334,13 @@
 
         {% endif %}
 
+
+        <!-- ================================================== -->
+        <!-- SETTINGS -->
+        <!-- ================================================== -->
+
+        {% if current_user.role == "Super Admin" %}
+
         <li>
 
             <a href="{{ url_for('settings.index') }}"
@@ -207,9 +354,16 @@
 
         </li>
 
+        {% endif %}
+
     </ul>
 
 </nav>
+
+
+<!-- ====================================================== -->
+<!-- SIDEBAR FOOTER -->
+<!-- ====================================================== -->
 
 <div class="sidebar-footer">
 

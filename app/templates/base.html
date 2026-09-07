@@ -1,139 +1,277 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+
+    <!-- ========================================== -->
+    <!-- TITLE -->
+    <!-- ========================================== -->
 
     <title>
+
         {% block title %}
-            {{ settings.meta_title or settings.site_name if settings else "Apex CMS" }}
+        Apex Citizens of Ghana
         {% endblock %}
+
     </title>
 
-    <!-- SEO -->
-    <meta name="description"
-          content="{% block meta_description %}{{ settings.meta_description if settings else '' }}{% endblock %}">
 
-    <meta name="keywords"
-          content="{% block meta_keywords %}{{ settings.meta_keywords if settings else '' }}{% endblock %}">
+    <!-- ========================================== -->
+    <!-- FAVICON -->
+    <!-- ========================================== -->
 
-    <meta name="author"
-          content="{{ settings.site_name if settings else 'Apex CMS' }}">
+    <link
+        rel="icon"
+        type="image/x-icon"
+        href="{{ url_for(
+            'static',
+            filename='images/favicon.ico'
+        ) }}"
+    >
 
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
 
-    <meta property="og:title"
-          content="{% block og_title %}{{ settings.meta_title or settings.site_name if settings else 'Apex CMS' }}{% endblock %}">
+    <!-- ========================================== -->
+    <!-- GOOGLE FONTS -->
+    <!-- ========================================== -->
 
-    <meta property="og:description"
-          content="{{ settings.meta_description if settings else '' }}">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-    <meta property="og:site_name"
-          content="{{ settings.site_name if settings else 'Apex CMS' }}">
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
-    <meta name="twitter:title"
-          content="{{ settings.meta_title or settings.site_name if settings else 'Apex CMS' }}">
 
-    <meta name="twitter:description"
-          content="{{ settings.meta_description if settings else '' }}">
+    <!-- ========================================== -->
+    <!-- BOOTSTRAP CSS -->
+    <!-- ========================================== -->
 
-    <!-- Favicon -->
-    {% if settings and settings.favicon %}
-    <link rel="icon"
-          type="image/png"
-          href="{{ url_for('static', filename='uploads/settings/' ~ settings.favicon) }}">
-    {% endif %}
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- ========================================== -->
+    <!-- FONT AWESOME -->
+    <!-- ========================================== -->
 
-    <!-- Swiper -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
 
-    <!-- Google Fonts -->
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
+    <!-- ========================================== -->
+    <!-- PUBLIC CSS -->
+    <!-- ========================================== -->
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/public.css'
+        ) }}"
+    >
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
 
-    {% block extra_css %}{% endblock %}
+    <!-- ========================================== -->
+    <!-- PAGE SPECIFIC CSS -->
+    <!-- ========================================== -->
+
+    {% block extra_css %}
+    {% endblock %}
+
+
 </head>
+
 
 <body>
 
-    {% include "includes/topbar.html" %}
+
+    <!-- ========================================== -->
+    <!-- NAVIGATION -->
+    <!-- ========================================== -->
 
     {% include "includes/navbar.html" %}
 
-    <!-- Flash Messages -->
-    <div class="container mt-3">
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
+    <!-- ========================================== -->
+    <!-- FLASH MESSAGES -->
+    <!-- ========================================== -->
 
-            {% if messages %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-container">
 
                 {% for category, message in messages %}
 
-                    <div class="alert alert-{{ category }} alert-dismissible fade show"
-                         role="alert">
+                    <div
+                        class="flash-message flash-{{ category }}"
+                    >
 
-                        {{ message }}
+                        <span>
+                            {{ message }}
+                        </span>
 
-                        <button type="button"
-                                class="btn-close"
-                                data-bs-dismiss="alert">
+                        <button
+                            type="button"
+                            onclick="this.parentElement.remove()"
+                            aria-label="Close"
+                        >
+                            &times;
                         </button>
 
                     </div>
 
                 {% endfor %}
 
-            {% endif %}
+            </div>
 
-        {% endwith %}
+        {% endif %}
 
-    </div>
+    {% endwith %}
+
+
+    <!-- ========================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================================== -->
 
     <main>
 
         {% block content %}
-
         {% endblock %}
 
     </main>
 
+
+    <!-- ========================================== -->
+    <!-- FOOTER -->
+    <!-- ========================================== -->
+
     {% include "includes/footer.html" %}
 
-    <!-- Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Swiper -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- ========================================== -->
+    <!-- BACK TO TOP BUTTON -->
+    <!-- ========================================== -->
 
-    <!-- Main JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <button
+        type="button"
+        id="backToTop"
+        class="back-to-top"
+        aria-label="Back to top"
+    >
 
-    {% block extra_js %}{% endblock %}
+        <i class="fas fa-arrow-up"></i>
+
+    </button>
+
+
+    <!-- ========================================== -->
+    <!-- BOOTSTRAP JAVASCRIPT -->
+    <!-- ========================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+
+    <!-- ========================================== -->
+    <!-- BACK TO TOP SCRIPT -->
+    <!-- ========================================== -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const backToTop =
+                    document.getElementById(
+                        "backToTop"
+                    );
+
+
+                if (!backToTop) {
+
+                    return;
+
+                }
+
+
+                window.addEventListener(
+                    "scroll",
+                    function () {
+
+                        if (
+                            window.scrollY > 300
+                        ) {
+
+                            backToTop.classList.add(
+                                "show"
+                            );
+
+                        } else {
+
+                            backToTop.classList.remove(
+                                "show"
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                backToTop.addEventListener(
+                    "click",
+                    function () {
+
+                        window.scrollTo({
+
+                            top: 0,
+
+                            behavior: "smooth"
+
+                        });
+
+                    }
+                );
+
+            }
+        );
+
+    </script>
+
+
+    <!-- ========================================== -->
+    <!-- PAGE SPECIFIC JAVASCRIPT -->
+    <!-- ========================================== -->
+
+    {% block extra_js %}
+    {% endblock %}
+
 
 </body>
 

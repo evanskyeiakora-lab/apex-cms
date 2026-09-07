@@ -1,25 +1,77 @@
-from flask import Flask
+from flask import Flask, app
 from datetime import datetime
 
 from config import Config
-from .extensions import db, migrate, login_manager
+
+from .extensions import (
+    db,
+    migrate,
+    login_manager,
+    mail,
+    csrf
+)
+
 from app.context_processors import inject_settings
 
 
 def create_app():
+
     app = Flask(__name__)
-    app.config.from_object(Config)
 
-    # Initialize Extensions
+    app.config.from_object(
+        Config
+    )
+
+
+    # ==========================================
+    # INITIALIZE EXTENSIONS
+    # ==========================================
+
+    # ==========================================
+# INITIALIZE EXTENSIONS
+# ==========================================
+
     db.init_app(app)
-    migrate.init_app(app, db)
-    login_manager.init_app(app)
 
-    # Flask-Login Configuration
-    login_manager.login_view = "auth.login"
-    login_manager.login_message_category = "warning"
+    migrate.init_app(
+    app,
+    db
+)
 
-    # Import Blueprints
+    login_manager.init_app(
+    app
+)
+
+    mail.init_app(
+    app
+)
+
+    csrf.init_app(
+    app
+)
+
+
+    # ==========================================
+    # FLASK-LOGIN CONFIGURATION
+    # ==========================================
+
+    login_manager.login_view = (
+        "auth.login"
+    )
+
+    login_manager.login_message_category = (
+        "warning"
+    )
+
+
+    # ==========================================
+    # IMPORT BLUEPRINTS
+    # ==========================================
+
+    # ==========================================
+# IMPORT BLUEPRINTS
+# ==========================================
+
     from .main import main_bp
     from .auth import auth_bp
     from .admin import admin_bp
@@ -32,27 +84,84 @@ def create_app():
     from .pages import pages_bp
     from .events import events_bp
     from .users import users_bp
-    # Register Blueprints
+    from .leaders import leaders_bp
 
-    app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp, url_prefix="/auth")
-    app.register_blueprint(admin_bp, url_prefix="/admin")
-    app.register_blueprint(news_bp)
-    app.register_blueprint(hero_bp)
-    app.register_blueprint(gallery_bp)
-    app.register_blueprint(members_bp)
-    app.register_blueprint(contact_bp)
-    app.register_blueprint(settings_bp)
-    app.register_blueprint(pages_bp)
-    app.register_blueprint(events_bp)
-    app.register_blueprint(users_bp)
-    # Global Context Processors
-    app.context_processor(inject_settings)
+    # ==========================================
+    # REGISTER BLUEPRINTS
+    # ==========================================
+
+
+    app.register_blueprint(
+    leaders_bp,
+    url_prefix="/admin/leaders"
+    )
+
+    app.register_blueprint(
+        main_bp
+    )
+
+    app.register_blueprint(
+        auth_bp,
+        url_prefix="/auth"
+    )
+
+    app.register_blueprint(
+        admin_bp,
+        url_prefix="/admin"
+    )
+
+    app.register_blueprint(
+        news_bp
+    )
+
+    app.register_blueprint(
+        hero_bp
+    )
+
+    app.register_blueprint(
+        gallery_bp
+    )
+
+    app.register_blueprint(
+        members_bp
+    )
+
+    app.register_blueprint(
+        contact_bp
+    )
+
+    app.register_blueprint(
+        settings_bp
+    )
+
+    app.register_blueprint(
+        pages_bp
+    )
+
+    app.register_blueprint(
+        events_bp
+    )
+
+    app.register_blueprint(
+        users_bp
+    )
+
+
+    # ==========================================
+    # GLOBAL CONTEXT PROCESSORS
+    # ==========================================
+
+    app.context_processor(
+        inject_settings
+    )
+
 
     @app.context_processor
     def inject_now():
+
         return {
             "current_year": datetime.now().year
         }
+
 
     return app

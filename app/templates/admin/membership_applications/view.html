@@ -1,0 +1,582 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}
+View Membership Application
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- ========================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="h3 mb-1">
+                Membership Application
+            </h1>
+
+            <p class="text-muted mb-0">
+                View membership application details.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <a
+                href="{{ url_for('admin.membership_applications') }}"
+                class="btn btn-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Back to Applications
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- APPLICATION STATUS -->
+    <!-- ========================================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-8">
+
+                    <h4 class="mb-1">
+
+                        {{ application.full_name }}
+
+                    </h4>
+
+                    <p class="text-muted mb-0">
+
+                        Submitted on
+
+                        {% if application.created_at %}
+
+                            {{ application.created_at.strftime("%d %B %Y, %I:%M %p") }}
+
+                        {% else %}
+
+                            N/A
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+                    {% if application.is_converted %}
+
+                        <span class="badge bg-success fs-6">
+
+                            <i class="bi bi-check-circle"></i>
+
+                            Converted to Member
+
+                        </span>
+
+                    {% elif application.status == "Approved" %}
+
+                        <span class="badge bg-success fs-6">
+
+                            Approved
+
+                        </span>
+
+                    {% elif application.status == "Rejected" %}
+
+                        <span class="badge bg-danger fs-6">
+
+                            Rejected
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-warning text-dark fs-6">
+
+                            Pending
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row">
+
+        <!-- ========================================= -->
+        <!-- APPLICANT INFORMATION -->
+        <!-- ========================================= -->
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-person"></i>
+
+                        Applicant Information
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row g-4">
+
+
+                        <!-- FULL NAME -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+
+                                Full Name
+
+                            </label>
+
+                            <p class="mb-0">
+
+                                {{ application.full_name }}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+
+                                Email Address
+
+                            </label>
+
+                            <p class="mb-0">
+
+                                {% if application.email %}
+
+                                    <a
+                                        href="mailto:{{ application.email }}"
+                                    >
+                                        {{ application.email }}
+                                    </a>
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- PHONE -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+
+                                Phone Number
+
+                            </label>
+
+                            <p class="mb-0">
+
+                                {% if application.phone %}
+
+                                    <a
+                                        href="tel:{{ application.phone }}"
+                                    >
+                                        {{ application.phone }}
+                                    </a>
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- LOCATION -->
+
+                        <div class="col-md-6">
+
+                            <label class="fw-bold text-muted">
+
+                                Location
+
+                            </label>
+
+                            <p class="mb-0">
+
+                                {{ application.location or "—" }}
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- INTEREST -->
+
+                        <div class="col-12">
+
+                            <label class="fw-bold text-muted">
+
+                                Area of Interest
+
+                            </label>
+
+                            <p class="mb-0">
+
+                                {{ application.interest or "—" }}
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- ADMIN NOTES -->
+            <!-- ========================================= -->
+
+            {% if application.admin_notes %}
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-chat-left-text"></i>
+
+                        Admin Notes
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <p class="mb-0">
+
+                        {{ application.admin_notes }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- ACTION PANEL -->
+        <!-- ========================================= -->
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-gear"></i>
+
+                        Application Actions
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <!-- ================================= -->
+                    <!-- CONVERT TO MEMBER -->
+                    <!-- ================================= -->
+
+                    {% if not application.is_converted %}
+
+                        {% if application.status != "Rejected" %}
+
+                        <div class="d-grid mb-3">
+
+                            <form
+    method="POST"
+    action="{{ url_for(
+        'admin.convert_membership_application',
+        id=application.id
+    ) }}"
+>
+    <button
+        type="submit"
+        class="btn btn-success w-100"
+        onclick="return confirm(
+            'Are you sure you want to convert this application into a member?'
+        )"
+    >
+        <i class="bi bi-person-plus"></i>
+        Convert to Member
+    </button>
+</form>
+
+                        </div>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <div class="alert alert-success mb-3">
+
+                            <i class="bi bi-check-circle-fill"></i>
+
+                            This application has already been converted
+                            into a member.
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- ================================= -->
+                    <!-- APPROVE -->
+                    <!-- ================================= -->
+
+                    {% if application.status == "Pending" %}
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'admin.update_membership_application_status',
+                            id=application.id,
+                            status='Approved'
+                        ) }}"
+                        class="mb-2"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+
+                            <i class="bi bi-check-circle"></i>
+
+                            Approve Application
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- ================================= -->
+                    <!-- REJECT -->
+                    <!-- ================================= -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'admin.update_membership_application_status',
+                            id=application.id,
+                            status='Rejected'
+                        ) }}"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-danger w-100"
+                            onclick="return confirm(
+                                'Are you sure you want to reject this application?'
+                            )"
+                        >
+
+                            <i class="bi bi-x-circle"></i>
+
+                            Reject Application
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+
+                    <hr>
+
+
+                    <!-- ================================= -->
+                    <!-- DELETE -->
+                    <!-- ================================= -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'admin.delete_membership_application',
+                            id=application.id
+                        ) }}"
+                        onsubmit="return confirm(
+                            'Are you sure you want to permanently delete this application?'
+                        )"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger w-100"
+                        >
+
+                            <i class="bi bi-trash"></i>
+
+                            Delete Application
+
+                        </button>
+
+                    </form>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- APPLICATION SUMMARY -->
+            <!-- ========================================= -->
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+
+                        <i class="bi bi-info-circle"></i>
+
+                        Application Summary
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <p>
+
+                        <strong>
+                            Application ID:
+                        </strong>
+
+                        #{{ application.id }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Status:
+                        </strong>
+
+                        {{ application.status or "Pending" }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Converted:
+                        </strong>
+
+                        {% if application.is_converted %}
+
+                            Yes
+
+                        {% else %}
+
+                            No
+
+                        {% endif %}
+
+                    </p>
+
+
+                    {% if application.converted_at %}
+
+                    <p class="mb-0">
+
+                        <strong>
+                            Converted On:
+                        </strong>
+
+                        {{ application.converted_at.strftime(
+                            "%d %B %Y"
+                        ) }}
+
+                    </p>
+
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -8,115 +8,396 @@
 
 {% set page_title = event.title %}
 {% set page_subtitle = "Event Details" %}
+
 {% include "includes/page_header.html" %}
 
-<div class="container py-5">
 
-    <div class="row">
+<section class="py-5">
 
-        <div class="col-lg-8">
+    <div class="container">
 
-            {% if event.featured_image %}
-            <img src="{{ url_for('static', filename='uploads/events/' ~ event.featured_image) }}"
-                 class="img-fluid rounded shadow mb-4"
-                 alt="{{ event.title }}">
-            {% endif %}
+        <div class="row g-5">
 
-            <h2 class="mb-3">{{ event.title }}</h2>
+            <!-- ========================================= -->
+            <!-- MAIN EVENT CONTENT -->
+            <!-- ========================================= -->
 
-            <div class="mb-4">
+            <div class="col-lg-8">
 
-                <p>
-                    <i class="fa-solid fa-calendar-days me-2 text-primary"></i>
-                    <strong>Date:</strong>
-                    {{ event.start_date.strftime('%d %B %Y') }}
+                <article class="event-detail">
 
-                    {% if event.end_date %}
-                        - {{ event.end_date.strftime('%d %B %Y') }}
-                    {% endif %}
-                </p>
+                    <!-- Featured Image -->
 
-                {% if event.start_time %}
-                <p>
-                    <i class="fa-solid fa-clock me-2 text-primary"></i>
-                    <strong>Time:</strong>
-                    {{ event.start_time.strftime('%I:%M %p') }}
+                    {% if event.featured_image %}
 
-                    {% if event.end_time %}
-                        - {{ event.end_time.strftime('%I:%M %p') }}
-                    {% endif %}
-                </p>
-                {% endif %}
+                    <div class="mb-4">
 
-                {% if event.venue %}
-                <p>
-                    <i class="fa-solid fa-location-dot me-2 text-primary"></i>
-                    <strong>Venue:</strong>
-                    {{ event.venue }}
-                </p>
-                {% endif %}
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='uploads/events/' ~ event.featured_image
+                            ) }}"
+                            class="img-fluid rounded-4 shadow-sm w-100"
+                            alt="{{ event.title }}"
+                            style="
+                                max-height: 520px;
+                                object-fit: cover;
+                            "
+                        >
 
-                {% if event.organizer %}
-                <p>
-                    <i class="fa-solid fa-user me-2 text-primary"></i>
-                    <strong>Organizer:</strong>
-                    {{ event.organizer }}
-                </p>
-                {% endif %}
-
-            </div>
-
-            <hr>
-
-            <div class="mt-4">
-                {{ event.description|safe }}
-            </div>
-
-            {% if event.registration_link %}
-            <div class="mt-5">
-                <a href="{{ event.registration_link }}"
-                   target="_blank"
-                   class="btn btn-primary btn-lg">
-                    <i class="fa-solid fa-user-plus me-2"></i>
-                    Register Now
-                </a>
-            </div>
-            {% endif %}
-
-        </div>
-
-        <div class="col-lg-4">
-
-            <div class="card shadow-sm">
-
-                <div class="card-header">
-                    <strong>Upcoming Events</strong>
-                </div>
-
-                <div class="list-group list-group-flush">
-
-                    {% for item in upcoming %}
-
-                    <a href="{{ url_for('main.event_detail', slug=item.slug) }}"
-                       class="list-group-item list-group-item-action">
-
-                        <strong>{{ item.title }}</strong>
-
-                        <br>
-
-                        <small class="text-muted">
-                            {{ item.start_date.strftime('%d %b %Y') }}
-                        </small>
-
-                    </a>
-
-                    {% else %}
-
-                    <div class="list-group-item">
-                        No upcoming events.
                     </div>
 
-                    {% endfor %}
+                    {% endif %}
+
+
+                    <!-- Event Title -->
+
+                    <h1 class="display-6 fw-bold mb-4">
+
+                        {{ event.title }}
+
+                    </h1>
+
+
+                    <!-- Description -->
+
+                    <div class="card border-0 shadow-sm mb-4">
+
+                        <div class="card-body p-4">
+
+                            <h5 class="fw-bold mb-4">
+
+                                <i class="fas fa-align-left text-primary me-2"></i>
+
+                                About This Event
+
+                            </h5>
+
+                            <div class="event-description">
+
+                                {{ event.description|safe }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Registration -->
+
+                    {% if event.registration_link %}
+
+                    <div class="card border-0 shadow-sm mb-4">
+
+                        <div class="card-body p-4 text-center">
+
+                            <h4 class="fw-bold mb-2">
+                                Join Us
+                            </h4>
+
+                            <p class="text-muted mb-4">
+
+                                We would be delighted to have you participate
+                                in this event.
+
+                            </p>
+
+                            <a
+                                href="{{ event.registration_link }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn btn-primary btn-lg px-5"
+                            >
+
+                                <i class="fas fa-user-plus me-2"></i>
+
+                                Register Now
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- Back Button -->
+
+                    <div class="mt-4">
+
+                        <a
+                            href="{{ url_for('main.events') }}"
+                            class="btn btn-outline-primary"
+                        >
+
+                            <i class="fas fa-arrow-left me-2"></i>
+
+                            Back to Events
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- SIDEBAR -->
+            <!-- ========================================= -->
+
+            <div class="col-lg-4">
+
+
+                <!-- ================================= -->
+                <!-- EVENT SUMMARY -->
+                <!-- ================================= -->
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-header bg-primary text-white py-3">
+
+                        <h5 class="mb-0">
+
+                            <i class="fas fa-calendar-check me-2"></i>
+
+                            Event Summary
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="card-body p-4">
+
+
+                        {% if event.start_date %}
+
+                        <div class="d-flex mb-4">
+
+                            <i class="fas fa-calendar-alt
+                                      text-primary
+                                      me-3
+                                      mt-1"></i>
+
+                            <div>
+
+                                <small class="text-muted d-block">
+                                    Date
+                                </small>
+
+                                <strong>
+
+                                    {{ event.start_date.strftime('%d %B %Y') }}
+
+                                    {% if event.end_date %}
+
+                                    <br>
+
+                                    <span class="text-muted fw-normal">
+
+                                        to
+                                        {{ event.end_date.strftime('%d %B %Y') }}
+
+                                    </span>
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if event.start_time %}
+
+                        <div class="d-flex mb-4">
+
+                            <i class="fas fa-clock
+                                      text-primary
+                                      me-3
+                                      mt-1"></i>
+
+                            <div>
+
+                                <small class="text-muted d-block">
+                                    Time
+                                </small>
+
+                                <strong>
+
+                                    {{ event.start_time.strftime('%I:%M %p') }}
+
+                                    {% if event.end_time %}
+
+                                    <br>
+
+                                    <span class="text-muted fw-normal">
+
+                                        to
+                                        {{ event.end_time.strftime('%I:%M %p') }}
+
+                                    </span>
+
+                                    {% endif %}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if event.venue %}
+
+                        <div class="d-flex mb-4">
+
+                            <i class="fas fa-map-marker-alt
+                                      text-primary
+                                      me-3
+                                      mt-1"></i>
+
+                            <div>
+
+                                <small class="text-muted d-block">
+                                    Venue
+                                </small>
+
+                                <strong>
+                                    {{ event.venue }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if event.organizer %}
+
+                        <div class="d-flex">
+
+                            <i class="fas fa-user
+                                      text-primary
+                                      me-3
+                                      mt-1"></i>
+
+                            <div>
+
+                                <small class="text-muted d-block">
+                                    Organizer
+                                </small>
+
+                                <strong>
+                                    {{ event.organizer }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================= -->
+                <!-- RELATED EVENTS -->
+                <!-- ================================= -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-header bg-primary text-white py-3">
+
+                        <h5 class="mb-0">
+
+                            <i class="fas fa-calendar-days me-2"></i>
+
+                            Related Events
+
+                        </h5>
+
+                    </div>
+
+
+                    <div class="list-group list-group-flush">
+
+                        {% for item in related_events %}
+
+                        <a
+                            href="{{ url_for(
+                                'main.event_detail',
+                                slug=item.slug
+                            ) }}"
+                            class="list-group-item
+                                   list-group-item-action
+                                   py-3"
+                        >
+
+                            <div class="d-flex">
+
+                                <div class="me-3">
+
+                                    <i class="fas fa-calendar-alt
+                                              text-primary"></i>
+
+                                </div>
+
+                                <div>
+
+                                    <strong class="d-block">
+
+                                        {{ item.title }}
+
+                                    </strong>
+
+                                    {% if item.start_date %}
+
+                                    <small class="text-muted">
+
+                                        {{ item.start_date.strftime('%d %b %Y') }}
+
+                                    </small>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                        {% else %}
+
+                        <div class="list-group-item py-4 text-center">
+
+                            <i class="fas fa-calendar-times
+                                      fa-2x
+                                      text-muted
+                                      mb-2"></i>
+
+                            <p class="text-muted mb-0">
+
+                                No related events available.
+
+                            </p>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
 
                 </div>
 
@@ -126,6 +407,6 @@
 
     </div>
 
-</div>
+</section>
 
 {% endblock %}

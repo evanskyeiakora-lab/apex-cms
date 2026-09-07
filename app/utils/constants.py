@@ -6,6 +6,7 @@ MEMBERS_FOLDER = "members"
 PAGES_FOLDER = "pages"
 SETTINGS_FOLDER = "settings"
 USERS_FOLDER = "users"
+LEADERS_FOLDER = "leaders"
 
 ALLOWED_IMAGE_EXTENSIONS = {
     "jpg",

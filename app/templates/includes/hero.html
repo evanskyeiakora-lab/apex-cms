@@ -8,11 +8,11 @@
 
             {% for slide in slides %}
 
-            <div class="swiper-slide">
+            <div 
 
-                <div class="hero-slide"
-                     style="background-image:url('{{ url_for('static', filename='uploads/heroes/' ~ slide.image) }}');">
-
+                 class="swiper-slide hero-slide"
+    data-bg="{{ url_for('static', filename='uploads/heroes/' ~ slide.image) }}"
+>
                     <div class="hero-overlay">
 
                         <div class="container">
@@ -112,3 +112,19 @@
 </section>
 
 {% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".hero-slide").forEach(function (slide) {
+
+        const image = slide.dataset.bg;
+
+        if (image) {
+            slide.style.backgroundImage = `url("${image}")`;
+        }
+
+    });
+
+});
+</script>

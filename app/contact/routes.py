@@ -2,30 +2,26 @@ from flask import (
     render_template,
     request,
     redirect,
-    url_for
+    url_for,
+    flash
 )
 
-from flask_login import login_required
+from app.extensions import db
 
 from . import contact_bp
+
 from .forms import ContactForm
 
 from app.models import ContactMessage
 
-from app.utils.database import (
-    save,
-    commit,
-    delete
+# ============================================================
+# PUBLIC CONTACT FORM
+# ============================================================
+
+@contact_bp.route(
+    "/contact/",
+    methods=["GET", "POST"]
 )
-
-from app.utils.helpers import flash_success
-
-
-# ==========================================
-# Public Contact Page
-# ==========================================
-
-@contact_bp.route("/contact", methods=["GET", "POST"])
 def contact():
 
     form = ContactForm()
@@ -33,22 +29,54 @@ def contact():
     if form.validate_on_submit():
 
         message = ContactMessage(
-            name=form.name.data,
-            email=form.email.data,
-            phone=form.phone.data,
-            subject=form.subject.data,
-            message=form.message.data,
+            name=form.name.data.strip(),
+
+            email=form.email.data.strip(),
+
+            phone=(
+                form.phone.data.strip()
+                if form.phone.data
+                else None
+            ),
+
+            subject=form.subject.data.strip(),
+
+            message=form.message.data.strip(),
+
             ip_address=request.remote_addr,
+
             user_agent=request.user_agent.string
         )
 
-        save(message)
+        try:
 
-        flash_success(
-            "Thank you for contacting us. We have received your message."
-        )
+            db.session.add(message)
 
-        return redirect(url_for("contact.contact"))
+            db.session.commit()
+
+            flash(
+                "Thank you for contacting us. "
+                "We have received your message.",
+                "success"
+            )
+
+            return redirect(
+                url_for("contact.contact")
+            )
+
+        except Exception as error:
+
+            db.session.rollback()
+
+            print(
+                f"Contact message error: {error}"
+            )
+
+            flash(
+                "Sorry, your message could not be sent. "
+                "Please try again.",
+                "danger"
+            )
 
     return render_template(
         "contact/index.html",
@@ -56,24 +84,19 @@ def contact():
     )
 
 
-# ==========================================
-# Admin Inbox
-# ==========================================
+# ============================================================
+# ADMIN — CONTACT MESSAGES
+# ============================================================
 
-@contact_bp.route("/admin/contact")
-@login_required
+@contact_bp.route(
+    "/admin/contact/"
+)
 def admin_index():
 
-    search = request.args.get("search", "").strip()
-
-    query = ContactMessage.query
-
-    if search:
-        query = query.filter(
-            ContactMessage.name.ilike(f"%{search}%") |
-            ContactMessage.email.ilike(f"%{search}%") |
-            ContactMessage.subject.ilike(f"%{search}%")
-        )
+    search = request.args.get(
+        "search",
+        ""
+    ).strip()
 
     page = request.args.get(
         "page",
@@ -81,12 +104,38 @@ def admin_index():
         type=int
     )
 
-    messages = query.order_by(
-        ContactMessage.created_at.desc()
-    ).paginate(
-        page=page,
-        per_page=20,
-        error_out=False
+    query = ContactMessage.query
+
+    # --------------------------------------------------------
+    # SEARCH
+    # --------------------------------------------------------
+
+    if search:
+
+        search_term = f"%{search}%"
+
+        query = query.filter(
+            ContactMessage.name.ilike(search_term)
+            |
+            ContactMessage.email.ilike(search_term)
+            |
+            ContactMessage.subject.ilike(search_term)
+        )
+
+    # --------------------------------------------------------
+    # PAGINATION
+    # --------------------------------------------------------
+
+    messages = (
+        query
+        .order_by(
+            ContactMessage.created_at.desc()
+        )
+        .paginate(
+            page=page,
+            per_page=20,
+            error_out=False
+        )
     )
 
     return render_template(
@@ -96,19 +145,28 @@ def admin_index():
     )
 
 
-# ==========================================
-# View Message
-# ==========================================
+# ============================================================
+# ADMIN — VIEW MESSAGE
+# ============================================================
 
-@contact_bp.route("/admin/contact/<int:id>")
-@login_required
+@contact_bp.route(
+    "/admin/contact/<int:id>"
+)
 def detail(id):
 
-    message = ContactMessage.query.get_or_404(id)
+    message = ContactMessage.query.get_or_404(
+        id
+    )
+
+    # --------------------------------------------------------
+    # MARK AS READ
+    # --------------------------------------------------------
 
     if not message.is_read:
+
         message.is_read = True
-        commit()
+
+        db.session.commit()
 
     return render_template(
         "admin/contact/detail.html",
@@ -116,24 +174,43 @@ def detail(id):
     )
 
 
-# ==========================================
-# Delete Message
-# ==========================================
+# ============================================================
+# ADMIN — DELETE MESSAGE
+# ============================================================
 
 @contact_bp.route(
     "/admin/contact/<int:id>/delete",
     methods=["POST"]
 )
-@login_required
 def remove(id):
 
-    message = ContactMessage.query.get_or_404(id)
-
-    delete(message)
-
-    flash_success(
-        "Message deleted successfully."
+    message = ContactMessage.query.get_or_404(
+        id
     )
+
+    try:
+
+        db.session.delete(message)
+
+        db.session.commit()
+
+        flash(
+            "Message deleted successfully.",
+            "success"
+        )
+
+    except Exception as error:
+
+        db.session.rollback()
+
+        print(
+            f"Contact delete error: {error}"
+        )
+
+        flash(
+            "Unable to delete message.",
+            "danger"
+        )
 
     return redirect(
         url_for("contact.admin_index")
