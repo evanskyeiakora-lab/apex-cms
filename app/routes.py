@@ -89,19 +89,22 @@ def home():
         .all()
     )
 
+    # ------------------------------------------------------
+# HOMEPAGE GALLERY
+# ------------------------------------------------------
+
     featured_gallery = (
         Gallery.query
-        .filter_by(
-            is_published=True,
-            is_featured=True
-        )
-        .order_by(
-            Gallery.display_order.asc(),
-            Gallery.created_at.desc()
-        )
-        .limit(8)
-        .all()
+        .filter(
+        Gallery.is_published.is_(True)
     )
+    .order_by(
+        Gallery.display_order.asc(),
+        Gallery.created_at.desc()
+    )
+    .limit(3)
+    .all()
+)
 
     leaders = (
         Leader.query

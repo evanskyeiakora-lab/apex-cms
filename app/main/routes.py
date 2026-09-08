@@ -138,22 +138,21 @@ def home():
     )
 
     # ------------------------------------------------------
-    # FEATURED GALLERY
-    # ------------------------------------------------------
+# HOMEPAGE GALLERY
+# ------------------------------------------------------
 
     featured_gallery = (
         Gallery.query
         .filter(
-            Gallery.is_published.is_(True),
-            Gallery.is_featured.is_(True)
-        )
-        .order_by(
-            Gallery.display_order.asc(),
-            Gallery.created_at.desc()
-        )
-        .limit(8)
-        .all()
+        Gallery.is_published.is_(True)
     )
+    .order_by(
+        Gallery.display_order.asc(),
+        Gallery.created_at.desc()
+    )
+    .limit(8)
+    .all()
+)
 
     # ------------------------------------------------------
     # LEADERSHIP
