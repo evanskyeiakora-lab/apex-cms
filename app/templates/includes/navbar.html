@@ -6,7 +6,6 @@
 
     <div class="container">
 
-
         <!-- =================================================
              LOGO / BRAND
         ================================================== -->
@@ -42,7 +41,6 @@
 
             {% endif %}
 
-
             <div class="d-flex flex-column">
 
                 <span class="fw-bold text-success">
@@ -53,7 +51,6 @@
                     }}
 
                 </span>
-
 
                 {% if settings and settings.tagline %}
 
@@ -106,8 +103,7 @@
                 <li class="nav-item">
 
                     <a
-                        class="nav-link
-                        {% if request.endpoint == 'main.home' %}active{% endif %}"
+                        class="nav-link {% if request.endpoint == 'main.home' %}active{% endif %}"
                         href="{{ url_for('main.home') }}"
                     >
 
@@ -123,8 +119,8 @@
                 <li class="nav-item">
 
                     <a
-                        class="nav-link"
-                        href="{{ url_for('main.home') }}#about"
+                        class="nav-link {% if request.endpoint == 'main.about' %}active{% endif %}"
+                        href="{{ url_for('main.about') }}"
                     >
 
                         About
@@ -139,8 +135,8 @@
                 <li class="nav-item">
 
                     <a
-                        class="nav-link"
-                        href="{{ url_for('main.home') }}#news"
+                        class="nav-link {% if request.endpoint in ['main.news', 'main.news_detail'] %}active{% endif %}"
+                        href="{{ url_for('main.news') }}"
                     >
 
                         News
@@ -155,8 +151,8 @@
                 <li class="nav-item">
 
                     <a
-                        class="nav-link"
-                        href="{{ url_for('main.home') }}#events"
+                        class="nav-link {% if request.endpoint in ['main.events', 'main.event_detail'] %}active{% endif %}"
+                        href="{{ url_for('main.events') }}"
                     >
 
                         Events
@@ -171,8 +167,8 @@
                 <li class="nav-item">
 
                     <a
-                        class="nav-link"
-                        href="{{ url_for('main.home') }}#gallery"
+                        class="nav-link {% if request.endpoint in ['main.gallery', 'main.gallery_detail'] %}active{% endif %}"
+                        href="{{ url_for('main.gallery') }}"
                     >
 
                         Gallery
@@ -187,8 +183,7 @@
                 <li class="nav-item">
 
                     <a
-                        class="nav-link
-                        {% if request.endpoint == 'contact.contact' %}active{% endif %}"
+                        class="nav-link {% if request.endpoint == 'contact.contact' %}active{% endif %}"
                         href="{{ url_for('contact.contact') }}"
                     >
 
@@ -204,7 +199,7 @@
                 <li class="nav-item ms-lg-3">
 
                     <a
-                        href="{{ url_for('main.home') }}#join-us"
+                        href="{{ url_for('main.join_us') }}"
                         class="nav-cta"
                     >
 
@@ -215,6 +210,7 @@
                     </a>
 
                 </li>
+
 
             </ul>
 
@@ -232,33 +228,46 @@
 <style>
 
 .navbar {
+
     min-height: 78px;
+
     z-index: 1030;
+
 }
 
 
 .navbar-brand {
+
     text-decoration: none;
+
 }
 
 
 .navbar-brand img {
+
     width: auto;
+
     object-fit: contain;
+
 }
 
 
 .navbar-brand span {
+
     font-size: 1.15rem;
+
 }
 
 
 .navbar-nav {
+
     gap: 6px;
+
 }
 
 
 .nav-link {
+
     color: #374151 !important;
 
     font-weight: 600;
@@ -268,20 +277,26 @@
     transition:
         color 0.2s ease,
         background-color 0.2s ease;
+
 }
 
 
 .nav-link:hover {
+
     color: #16864f !important;
+
 }
 
 
 .nav-link.active {
+
     color: #16864f !important;
+
 }
 
 
 .nav-cta {
+
     display: inline-flex;
 
     align-items: center;
@@ -303,38 +318,47 @@
     transition:
         background-color 0.2s ease,
         transform 0.2s ease;
+
 }
 
 
 .nav-cta:hover {
+
     background: #106b3e;
 
     color: #ffffff !important;
 
     transform: translateY(-1px);
+
 }
 
 
 @media (max-width: 991px) {
 
     .navbar-nav {
+
         padding-top: 15px;
 
         padding-bottom: 15px;
 
         gap: 2px;
+
     }
 
 
     .nav-link {
+
         padding: 10px 5px !important;
+
     }
 
 
     .nav-cta {
+
         display: inline-flex;
 
         margin-top: 8px;
+
     }
 
 }
