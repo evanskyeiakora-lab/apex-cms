@@ -771,12 +771,9 @@ def members():
 )
 def join_us():
 
-    return redirect(
-        url_for(
-            "membership.apply"
-        )
+    return render_template(
+        "public/join_us.html"
     )
-
 
 # ==========================================================
 # CONTACT
